@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     projectId: 'po-2025-battle',
     storageBucket: 'po-2025-battle.firebasestorage.app',
   );
+
 }
