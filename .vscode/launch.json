@@ -1,0 +1,10 @@
+{
+    "configurations": [
+        {
+            "name": "Portes Ouvertes",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\main.dart"
+        }
+    ]
+}
