@@ -6,6 +6,10 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(title: 'Portes ouvertes', home: RoomListScreen());
+    return const MaterialApp(
+      title: 'Portes ouvertes',
+      home: RoomListScreen(),
+      debugShowCheckedModeBanner: false,
+    );
   }
 }
