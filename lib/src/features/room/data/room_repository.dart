@@ -36,3 +36,13 @@ final roomListStreamProvider = StreamProvider<List<Room>>((ref) {
   ref.read(roomRepositoryProvider).createRoom();
   return roomRepo.watchRoomList();
 });
+
+List<Room> filterRooms(String query, List<Room> rooms) {
+  if (query.isEmpty) {
+    return rooms;
+  }
+
+  return rooms
+      .where((r) => r.name.toLowerCase().contains(query.toLowerCase()))
+      .toList();
+}
