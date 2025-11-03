@@ -94,8 +94,20 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                 ],
               ),
               error: (error, stackTrace) =>
-                  Center(child: Text(error.toString())),
-              loading: () => const Center(child: CircularProgressIndicator()),
+                  Expanded(child: Center(child: Text(error.toString()))),
+              loading: () => Expanded(
+                child:
+                    // Center(child: CircularProgressIndicator()),
+                    ListView.separated(
+                      itemBuilder: (context, index) => const Padding(
+                        padding: EdgeInsets.all(Sizes.p8),
+                        child: NoUserCard(),
+                      ),
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 4.0),
+                      itemCount: 8,
+                    ),
+              ),
             );
           },
         ),

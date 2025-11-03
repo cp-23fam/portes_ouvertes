@@ -25,10 +25,10 @@ class _RoomListScreenState extends State<RoomListScreen> {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
       if (user == null) {
         isConnected = false;
-        print('User is currently signed out!');
+        // print('User is currently signed out!');
       } else {
         isConnected = true;
-        print('User is signed in!');
+        // print('User is signed in!');
       }
     });
     return Scaffold(
@@ -124,9 +124,10 @@ class _RoomListScreenState extends State<RoomListScreen> {
                     ),
                   ),
                   error: (error, stackTrace) =>
-                      Center(child: Text(error.toString())),
-                  loading: () =>
-                      const Center(child: CircularProgressIndicator()),
+                      Expanded(child: Center(child: Text(error.toString()))),
+                  loading: () => const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
                 );
               },
             ),
