@@ -17,7 +17,7 @@ class AppColors {
   static Color goodColor = const Color.fromRGBO(30, 168, 23, 1);
   static Color specialColor = const Color.fromRGBO(47, 0, 127, 1);
   static Color hostColor = const Color.fromRGBO(230, 200, 30, 1);
-  static Color deleteColor = const Color.fromRGBO(244, 67, 54, 1);
+  static Color deleteColor = const Color.fromRGBO(168, 23, 23, 1);
 }
 
 ThemeData blackTheme = ThemeData(
