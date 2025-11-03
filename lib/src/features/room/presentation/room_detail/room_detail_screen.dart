@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:portes_ouvertes/src/common_widgets/back_arrow.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
