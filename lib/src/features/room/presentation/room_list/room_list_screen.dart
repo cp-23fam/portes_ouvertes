@@ -54,9 +54,9 @@ class _RoomListScreenState extends State<RoomListScreen> {
                   child: InkWell(
                     onTap: () {
                       if (isConnected) {
-                        context.goNamed(RouteNames.user.name);
+                        context.goNamed(RouteNames.userPage.name);
                       } else {
-                        context.goNamed(RouteNames.user.name);
+                        context.goNamed(RouteNames.login.name);
                       }
                     },
                     child: MouseRegion(
