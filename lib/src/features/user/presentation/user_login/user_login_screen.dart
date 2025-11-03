@@ -198,15 +198,18 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               ),
             ),
             const Expanded(child: SizedBox()),
-            ImportantButton(
-              color: AppColors.goodColor,
-              text: 'Connexion',
-              onPressed: () {
-                FirebaseAuth.instance.signInWithEmailAndPassword(
-                  email: emailController.value.text,
-                  password: passwordController.value.text,
-                );
-              },
+            Padding(
+              padding: const EdgeInsets.all(Sizes.p32),
+              child: ImportantButton(
+                color: AppColors.goodColor,
+                text: 'Connexion',
+                onPressed: () {
+                  FirebaseAuth.instance.signInWithEmailAndPassword(
+                    email: emailController.value.text,
+                    password: passwordController.value.text,
+                  );
+                },
+              ),
             ),
           ],
         ),
