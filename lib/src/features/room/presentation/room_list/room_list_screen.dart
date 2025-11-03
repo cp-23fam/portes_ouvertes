@@ -38,7 +38,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 Padding(
                   padding: const EdgeInsets.all(16.0),
                   child: InkWell(
-                    onTap: () => context.goNamed(RouteNames.user.name),
+                    onTap: () => context.goNamed(RouteNames.login.name),
                     child: CircleAvatar(
                       backgroundColor: AppColors.secondeColor,
                       radius: 30.0,
