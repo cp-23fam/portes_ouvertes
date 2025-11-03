@@ -4,10 +4,16 @@ But :  Créer un  jeu interractif sur mobile en utilisant Flutter
 # Classes
 ```mermaid
 classDiagram
+    direction LR
+
+    Room -- RoomStatus
+    Room -- User
+
     class Room {
+        RoomId id
         String name
         UserId hostId
-        List<UserId> users
+        List~UserId~ users
         RoomStatus status
         int maxPlayers
 
@@ -16,17 +22,27 @@ classDiagram
     }
 
     class RoomStatus {
+        <<enum>>
         creating
         waiting
         playing
+    }
+
+    class User {
+        UserId uid
+        String username
+        String? imageUrl
+
+        Map toMap()
+        User fromMap(Map map)
     }
 ```
 # Fonctionnalités
 - [X] Lister les salles présentes
 - [ ] Créer une salle
-- [ ] Afficher les détails d'une salle
-- [ ] Afficher les joueurs d'une salle
-- [ ] Afficher le host d'une salle
+- [X] Afficher les détails d'une salle
+- [X] Afficher les joueurs d'une salle
+- [X] Afficher le host d'une salle
 - [ ] Se connecter
 # Émulateurs
 Le projet utilise des émulateurs pour développer de tout.

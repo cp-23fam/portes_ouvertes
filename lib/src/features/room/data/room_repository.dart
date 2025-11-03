@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/features/room/domain/room.dart';
+import 'package:portes_ouvertes/src/features/user/domain/user.dart';
 
 class RoomRepository {
   final _db = FirebaseFirestore.instance;
@@ -14,8 +15,31 @@ class RoomRepository {
     );
   }
 
-  Future<void> createRoom(Room room) async {
-    await _collection.add(room.toMap());
+  Stream<Room> watchRoom(RoomId id) {
+    final snapshot = _collection.doc(id).snapshots();
+
+    return snapshot.map((r) => Room.fromMap(r.data()!));
+  }
+
+  Future<String> createRoom(String name, UserId hostId, int maxPlayers) async {
+    final doc = _collection.doc();
+
+    final room = Room(
+      id: doc.id,
+      name: name,
+      hostId: hostId,
+      users: [hostId],
+      status: RoomStatus.waiting,
+      maxPlayers: maxPlayers,
+    );
+
+    await doc.set(room.toMap());
+
+    return doc.id;
+  }
+
+  Future<void> updateRoom(Room room) async {
+    await _collection.doc(room.id).set(room.toMap());
   }
 }
 
@@ -23,20 +47,19 @@ final roomRepositoryProvider = Provider<RoomRepository>((ref) {
   return RoomRepository();
 });
 
-final roomListStreamProvider = StreamProvider<List<Room>>((ref) {
+final roomListStreamProvider = StreamProvider<List<Room>>((ref) async* {
   final roomRepo = ref.watch(roomRepositoryProvider);
-  ref
-      .read(roomRepositoryProvider)
-      .createRoom(
-        Room(
-          name: 'Test room',
-          hostId: 'abcdef',
-          users: [],
-          status: RoomStatus.waiting,
-          maxPlayers: 8,
-        ),
-      );
-  return roomRepo.watchRoomList();
+
+  // final userId = await ref.read(userRepositoryProvider).createUser('Fabrioche');
+  // roomRepo.createRoom('Test room', userId, 8);
+
+  yield* roomRepo.watchRoomList();
+});
+
+final roomStreamProvider = StreamProvider.family<Room, String>((ref, roomId) {
+  final roomRepo = ref.watch(roomRepositoryProvider);
+
+  return roomRepo.watchRoom(roomId);
 });
 
 List<Room> filterRooms(String query, List<Room> rooms) {

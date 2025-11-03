@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_list/room_card.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
+import 'package:portes_ouvertes/src/routing/app_router.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class RoomListScreen extends StatefulWidget {
@@ -60,6 +62,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 });
               },
             ),
+
             Consumer(
               builder: (context, ref, child) {
                 final roomsStream = ref.watch(roomListStreamProvider);
@@ -68,7 +71,15 @@ class _RoomListScreenState extends State<RoomListScreen> {
                   data: (rooms) => Expanded(
                     child: ListView.separated(
                       itemBuilder: (context, index) {
-                        return RoomCard(room: rooms[index]);
+                        return RoomCard(
+                          room: rooms[index],
+                          onClick: () {
+                            context.goNamed(
+                              RouteNames.details.name,
+                              pathParameters: {'id': rooms[index].id},
+                            );
+                          },
+                        );
                       },
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 8.0),
@@ -81,6 +92,28 @@ class _RoomListScreenState extends State<RoomListScreen> {
                       const Center(child: CircularProgressIndicator()),
                 );
               },
+            ),
+            TextButton(
+              onPressed: () => context.goNamed(RouteNames.creation.name),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(
+                  AppColors.goodColor,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: Sizes.p8,
+                  horizontal: Sizes.p20,
+                ),
+                child: Text(
+                  'Create a room'.hardcoded,
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: Sizes.p24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ],
         ),

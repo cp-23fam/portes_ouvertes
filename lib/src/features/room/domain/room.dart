@@ -1,5 +1,8 @@
 import 'dart:convert';
+
 import 'package:portes_ouvertes/src/features/user/domain/user.dart';
+
+typedef RoomId = String;
 
 enum RoomStatus { creating, waiting, playing }
 
@@ -11,6 +14,7 @@ class Room {
     final users = map['users'] as List?;
 
     return Room(
+      id: map['id'] as String,
       name: map['name'] as String,
       hostId: map['hostId'] as String,
       users: users == null ? [] : users.cast<String>(),
@@ -20,6 +24,7 @@ class Room {
   }
 
   Room({
+    required this.id,
     required this.name,
     required this.hostId,
     required this.users,
@@ -27,6 +32,7 @@ class Room {
     required this.maxPlayers,
   });
 
+  final RoomId id;
   final String name;
   final UserId hostId;
   final List<UserId> users;
@@ -35,6 +41,7 @@ class Room {
 
   Map<String, dynamic> toMap() {
     return <String, dynamic>{
+      'id': id,
       'name': name,
       'hostId': hostId,
       'users': users,
@@ -44,4 +51,22 @@ class Room {
   }
 
   String toJson() => json.encode(toMap());
+
+  Room copyWith({
+    RoomId? id,
+    String? name,
+    UserId? hostId,
+    List<UserId>? users,
+    RoomStatus? status,
+    int? maxPlayers,
+  }) {
+    return Room(
+      id: id ?? this.id,
+      name: name ?? this.name,
+      hostId: hostId ?? this.hostId,
+      users: users ?? this.users,
+      status: status ?? this.status,
+      maxPlayers: maxPlayers ?? this.maxPlayers,
+    );
+  }
 }
