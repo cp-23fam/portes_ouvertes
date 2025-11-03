@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class BackArrow extends StatefulWidget {
@@ -15,7 +16,7 @@ class _BackArrowState extends State<BackArrow> {
     return Padding(
       padding: const EdgeInsets.all(16.0),
       child: GestureDetector(
-        onTap: () {},
+        onTap: () => context.pop('.'),
         child: MouseRegion(
           onEnter: (event) {
             setState(() {

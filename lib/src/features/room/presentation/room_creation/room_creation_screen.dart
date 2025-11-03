@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:portes_ouvertes/src/common_widgets/back_arrow.dart';
+import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
@@ -88,28 +89,12 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
               ),
             ),
             const Expanded(child: SizedBox()),
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                width: 200,
-                height: 50,
-                margin: const EdgeInsets.all(Sizes.p32),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(Sizes.p20),
-                  ),
-                  color: AppColors.goodColor,
-                ),
-                child: Center(
-                  child: Text(
-                    'Créer'.hardcoded,
-                    style: TextStyle(
-                      color: AppColors.textColor,
-                      fontSize: Sizes.p24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
+            Padding(
+              padding: const EdgeInsets.all(Sizes.p32),
+              child: ImportantButton(
+                color: AppColors.goodColor,
+                text: 'Créer',
+                onPressed: () {},
               ),
             ),
           ],

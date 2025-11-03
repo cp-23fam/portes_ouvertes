@@ -21,7 +21,7 @@ class _ImportantButtonState extends State<ImportantButton> {
   bool isHover = false;
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
+    return InkWell(
       onTap: widget.onPressed,
       child: MouseRegion(
         onEnter: (event) {

@@ -5,10 +5,16 @@ import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class RoomCard extends StatelessWidget {
-  const RoomCard({required this.room, required this.onClick, super.key});
+  const RoomCard({
+    required this.room,
+    required this.onClick,
+    super.key,
+    required this.isEnable,
+  });
 
   final Room room;
   final VoidCallback onClick;
+  final bool isEnable;
 
   @override
   Widget build(BuildContext context) {
@@ -56,10 +62,12 @@ class RoomCard extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: onClick,
+                  onPressed: isEnable ? onClick : () {},
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
-                      AppColors.goodColor,
+                      isEnable
+                          ? AppColors.goodColor
+                          : AppColors.goodColor.withAlpha(50),
                     ),
                   ),
                   child: Padding(
