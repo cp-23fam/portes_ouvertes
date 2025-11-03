@@ -37,13 +37,16 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: CircleAvatar(
-                    backgroundColor: AppColors.secondeColor,
-                    radius: 30.0,
-                    child: Icon(
-                      Icons.person_outline,
-                      color: AppColors.iconColor,
-                      size: 45.0,
+                  child: InkWell(
+                    onTap: () => context.goNamed(RouteNames.user.name),
+                    child: CircleAvatar(
+                      backgroundColor: AppColors.secondeColor,
+                      radius: 30.0,
+                      child: Icon(
+                        Icons.person_outline,
+                        color: AppColors.iconColor,
+                        size: 45.0,
+                      ),
                     ),
                   ),
                 ),

@@ -1,5 +1,8 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:portes_ouvertes/src/common_widgets/back_arrow.dart';
+import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
@@ -13,6 +16,25 @@ class UserCreation extends StatefulWidget {
 }
 
 class _UserCreationState extends State<UserCreation> {
+  late final TextEditingController emailController;
+  late final TextEditingController passwordController;
+
+  @override
+  void initState() {
+    emailController = TextEditingController();
+    passwordController = TextEditingController();
+
+    super.initState();
+  }
+
+  @override
+  void dispose() {
+    emailController.dispose();
+    passwordController.dispose();
+
+    super.dispose();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,7 +63,7 @@ class _UserCreationState extends State<UserCreation> {
                     Padding(
                       padding: const EdgeInsets.all(Sizes.p8),
                       child: Text(
-                        'Création d\'un Utilisateur'.hardcoded,
+                        'Connexion'.hardcoded,
                         style: TextStyle(
                           color: AppColors.textColor,
                           fontSize: Sizes.p32,
@@ -51,6 +73,7 @@ class _UserCreationState extends State<UserCreation> {
                     ),
                     gapH24,
                     TextField(
+                      controller: emailController,
                       style: TextStyle(color: AppColors.titleColor),
                       decoration: InputDecoration(
                         labelText: 'Adresse mail'.hardcoded,
@@ -63,6 +86,7 @@ class _UserCreationState extends State<UserCreation> {
                     ),
                     gapH12,
                     TextField(
+                      controller: passwordController,
                       style: TextStyle(color: AppColors.titleColor),
                       obscureText: true,
                       enableSuggestions: false,
@@ -81,19 +105,41 @@ class _UserCreationState extends State<UserCreation> {
                     gapH20,
                     Center(
                       child: SignInButton(
+                        btnText: 'Connexion Google'.hardcoded,
                         buttonType: ButtonType.google,
                         buttonSize: ButtonSize.medium,
-                        onPressed: () {},
+                        onPressed: () {
+                          if (kIsWeb) {
+                            FirebaseAuth.instance.signInWithPopup(
+                              GoogleAuthProvider(),
+                            );
+                          } else {
+                            FirebaseAuth.instance.signInWithProvider(
+                              GoogleAuthProvider(),
+                            );
+                          }
+                        },
                       ),
                     ),
                     gapH8,
                     Center(
                       child: SignInButton(
+                        btnText: 'Connexion GitHub'.hardcoded,
                         buttonType: ButtonType.github,
                         buttonSize: ButtonSize.medium,
                         btnColor: AppColors.thirdColor,
                         btnTextColor: AppColors.textColor,
-                        onPressed: () {},
+                        onPressed: () {
+                          if (kIsWeb) {
+                            FirebaseAuth.instance.signInWithPopup(
+                              GithubAuthProvider(),
+                            );
+                          } else {
+                            FirebaseAuth.instance.signInWithProvider(
+                              GithubAuthProvider(),
+                            );
+                          }
+                        },
                       ),
                     ),
                     gapH20,
@@ -102,29 +148,15 @@ class _UserCreationState extends State<UserCreation> {
               ),
             ),
             const Expanded(child: SizedBox()),
-            GestureDetector(
-              onTap: () {},
-              child: Container(
-                width: 200,
-                height: 50,
-                margin: const EdgeInsets.all(Sizes.p32),
-                decoration: BoxDecoration(
-                  borderRadius: const BorderRadius.all(
-                    Radius.circular(Sizes.p20),
-                  ),
-                  color: AppColors.goodColor,
-                ),
-                child: Center(
-                  child: Text(
-                    'Créer'.hardcoded,
-                    style: TextStyle(
-                      color: AppColors.textColor,
-                      fontSize: Sizes.p24,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
+            ImportantButton(
+              color: AppColors.goodColor,
+              text: 'Connexion',
+              onPressed: () {
+                FirebaseAuth.instance.signInWithEmailAndPassword(
+                  email: emailController.value.text,
+                  password: passwordController.value.text,
+                );
+              },
             ),
           ],
         ),
