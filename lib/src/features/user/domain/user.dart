@@ -13,7 +13,7 @@ class User {
 
   factory User.fromJson(String source) =>
       User.fromMap(json.decode(source) as Map<String, dynamic>);
-  User({required this.uid, required this.username, required this.imageUrl});
+  User({required this.uid, required this.username, this.imageUrl});
 
   final UserId uid;
   final String username;

@@ -25,7 +25,17 @@ final roomRepositoryProvider = Provider<RoomRepository>((ref) {
 
 final roomListStreamProvider = StreamProvider<List<Room>>((ref) {
   final roomRepo = ref.watch(roomRepositoryProvider);
-  // ref.read(roomRepositoryProvider).createRoom();
+  ref
+      .read(roomRepositoryProvider)
+      .createRoom(
+        Room(
+          name: 'Test room',
+          hostId: 'abcdef',
+          users: [],
+          status: RoomStatus.waiting,
+          maxPlayers: 8,
+        ),
+      );
   return roomRepo.watchRoomList();
 });
 
