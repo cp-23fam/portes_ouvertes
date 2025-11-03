@@ -14,16 +14,8 @@ class RoomRepository {
     );
   }
 
-  Future<void> createRoom() async {
-    await _collection.add(
-      Room(
-        name: 'Test',
-        hostId: '',
-        users: [],
-        status: RoomStatus.creating,
-        maxPlayers: 20,
-      ).toMap(),
-    );
+  Future<void> createRoom(Room room) async {
+    await _collection.add(room.toMap());
   }
 }
 

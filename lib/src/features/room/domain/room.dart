@@ -1,6 +1,5 @@
 import 'dart:convert';
-
-typedef UserId = String;
+import 'package:portes_ouvertes/src/features/user/domain/user.dart';
 
 enum RoomStatus { creating, waiting, playing }
 
