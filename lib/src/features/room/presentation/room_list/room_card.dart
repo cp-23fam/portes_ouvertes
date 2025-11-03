@@ -4,9 +4,10 @@ import 'package:portes_ouvertes/src/features/room/domain/room.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class RoomCard extends StatelessWidget {
-  const RoomCard({required this.room, super.key});
+  const RoomCard({required this.room, required this.onClick, super.key});
 
   final Room room;
+  final VoidCallback onClick;
 
   @override
   Widget build(BuildContext context) {
@@ -54,7 +55,7 @@ class RoomCard extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {},
+                  onPressed: onClick,
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
                       AppColors.goodColor,

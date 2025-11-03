@@ -6,12 +6,10 @@ class UserRepository {
   final _db = FirebaseFirestore.instance;
   late final _collection = _db.collection('users');
 
-  Future<User?> getUserFrom(String uid) async {
+  Future<User> getUserFrom(String uid) async {
     final userMap = await _collection.doc(uid).get();
-    if (userMap.data() != null) {
-      return User.fromMap(userMap.data()!);
-    }
-    return null;
+
+    return User.fromMap(userMap.data()!);
   }
 
   Future<void> updateUser(User user) async {
@@ -25,4 +23,10 @@ class UserRepository {
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {
   return UserRepository();
+});
+
+final userFutureProvider = FutureProvider.family<User, String>((ref, uid) {
+  final userRepo = ref.watch(userRepositoryProvider);
+
+  return userRepo.getUserFrom(uid);
 });

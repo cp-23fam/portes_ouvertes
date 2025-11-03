@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_list/room_card.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
+import 'package:portes_ouvertes/src/routing/app_router.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class RoomListScreen extends StatefulWidget {
@@ -68,7 +70,15 @@ class _RoomListScreenState extends State<RoomListScreen> {
                   data: (rooms) => Expanded(
                     child: ListView.separated(
                       itemBuilder: (context, index) {
-                        return RoomCard(room: rooms[index]);
+                        return RoomCard(
+                          room: rooms[index],
+                          onClick: () {
+                            context.goNamed(
+                              RouteNames.details.name,
+                              pathParameters: {'id': rooms[index].id},
+                            );
+                          },
+                        );
                       },
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 8.0),
