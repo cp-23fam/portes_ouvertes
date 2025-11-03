@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_list/room_list_screen.dart';
-import 'package:portes_ouvertes/src/features/user/presentation/user_creation/user_creation.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class MyApp extends StatelessWidget {
@@ -11,8 +10,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Portes ouvertes',
       theme: blackTheme,
-      // home: const RoomListScreen(),
-      home: const UserCreation(),
+      home: const RoomListScreen(),
       debugShowCheckedModeBanner: false,
     );
   }
