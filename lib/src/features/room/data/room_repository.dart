@@ -33,7 +33,7 @@ final roomRepositoryProvider = Provider<RoomRepository>((ref) {
 
 final roomListStreamProvider = StreamProvider<List<Room>>((ref) {
   final roomRepo = ref.watch(roomRepositoryProvider);
-  ref.read(roomRepositoryProvider).createRoom();
+  // ref.read(roomRepositoryProvider).createRoom();
   return roomRepo.watchRoomList();
 });
 
