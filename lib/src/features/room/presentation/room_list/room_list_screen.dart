@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
+import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_list/room_card.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
@@ -58,7 +60,28 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 });
               },
             ),
-            Padding(padding: EdgeInsets.all(Sizes.p8), child: RoomCard()),
+            Consumer(
+              builder: (context, ref, child) {
+                final roomsStream = ref.watch(roomListStreamProvider);
+
+                return roomsStream.when(
+                  data: (rooms) => Expanded(
+                    child: ListView.separated(
+                      itemBuilder: (context, index) {
+                        return RoomCard(room: rooms[index]);
+                      },
+                      separatorBuilder: (context, index) =>
+                          const SizedBox(height: 8.0),
+                      itemCount: rooms.length,
+                    ),
+                  ),
+                  error: (error, stackTrace) =>
+                      Center(child: Text(error.toString())),
+                  loading: () =>
+                      const Center(child: CircularProgressIndicator()),
+                );
+              },
+            ),
           ],
         ),
       ),

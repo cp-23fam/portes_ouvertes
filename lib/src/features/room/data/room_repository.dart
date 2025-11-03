@@ -14,16 +14,8 @@ class RoomRepository {
     );
   }
 
-  Future<void> createRoom() async {
-    await _collection.add(
-      Room(
-        name: 'Test',
-        hostId: '',
-        users: [],
-        status: RoomStatus.creating,
-        maxPlayers: 20,
-      ).toMap(),
-    );
+  Future<void> createRoom(Room room) async {
+    await _collection.add(room.toMap());
   }
 }
 
@@ -33,7 +25,7 @@ final roomRepositoryProvider = Provider<RoomRepository>((ref) {
 
 final roomListStreamProvider = StreamProvider<List<Room>>((ref) {
   final roomRepo = ref.watch(roomRepositoryProvider);
-  ref.read(roomRepositoryProvider).createRoom();
+  // ref.read(roomRepositoryProvider).createRoom();
   return roomRepo.watchRoomList();
 });
 

@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
+import 'package:portes_ouvertes/src/features/room/domain/room.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class RoomCard extends StatelessWidget {
-  const RoomCard({super.key});
+  const RoomCard({required this.room, super.key});
+
+  final Room room;
 
   @override
   Widget build(BuildContext context) {
@@ -19,18 +22,15 @@ class RoomCard extends StatelessWidget {
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: [
-            const Column(
+            Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text('Pro Players Only'),
-                    Text('Host : MasterMind'),
-                  ],
+                  children: [Text(room.name), Text('Host : ${room.hostId}')],
                 ),
-                Text('6 / 8 Players'),
+                Text('${room.users.length} / ${room.maxPlayers} Players'),
               ],
             ),
             Column(

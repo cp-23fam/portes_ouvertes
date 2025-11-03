@@ -22,7 +22,7 @@ classDiagram
     }
 ```
 # Fonctionnalités
-- [ ] Lister les salles présentes
+- [X] Lister les salles présentes
 - [ ] Créer une salle
 - [ ] Afficher les détails d'une salle
 - [ ] Afficher les joueurs d'une salle
