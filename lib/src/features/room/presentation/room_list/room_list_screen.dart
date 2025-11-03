@@ -18,11 +18,12 @@ class RoomListScreen extends StatefulWidget {
 }
 
 class _RoomListScreenState extends State<RoomListScreen> {
-  late bool isConnected = true;
+  late bool isConnected = false;
   bool roundIsHover = false;
   @override
   Widget build(BuildContext context) {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      isConnected = user != null;
       if (user == null) {
         isConnected = false;
         // print('User is currently signed out!');
@@ -98,39 +99,41 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 });
               },
             ),
+            isConnected
+                ? Consumer(
+                    builder: (context, ref, child) {
+                      final roomsStream = ref.watch(roomListStreamProvider);
 
-            Consumer(
-              builder: (context, ref, child) {
-                final roomsStream = ref.watch(roomListStreamProvider);
-
-                return roomsStream.when(
-                  data: (rooms) => Expanded(
-                    child: ListView.separated(
-                      itemBuilder: (context, index) {
-                        return RoomCard(
-                          room: rooms[index],
-                          onClick: () {
-                            context.goNamed(
-                              RouteNames.details.name,
-                              pathParameters: {'id': rooms[index].id},
-                            );
-                          },
-                          isEnable: isConnected,
-                        );
-                      },
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 8.0),
-                      itemCount: rooms.length,
-                    ),
-                  ),
-                  error: (error, stackTrace) =>
-                      Expanded(child: Center(child: Text(error.toString()))),
-                  loading: () => const Expanded(
-                    child: Center(child: CircularProgressIndicator()),
-                  ),
-                );
-              },
-            ),
+                      return roomsStream.when(
+                        data: (rooms) => Expanded(
+                          child: ListView.separated(
+                            itemBuilder: (context, index) {
+                              return RoomCard(
+                                room: rooms[index],
+                                onClick: () {
+                                  context.goNamed(
+                                    RouteNames.details.name,
+                                    pathParameters: {'id': rooms[index].id},
+                                  );
+                                },
+                                isEnable: isConnected,
+                              );
+                            },
+                            separatorBuilder: (context, index) =>
+                                const SizedBox(height: 8.0),
+                            itemCount: rooms.length,
+                          ),
+                        ),
+                        error: (error, stackTrace) => Expanded(
+                          child: Center(child: Text(error.toString())),
+                        ),
+                        loading: () => const Expanded(
+                          child: Center(child: CircularProgressIndicator()),
+                        ),
+                      );
+                    },
+                  )
+                : const Expanded(child: Center(child: Text('...'))),
             Padding(
               padding: const EdgeInsets.all(Sizes.p32),
               child: !isConnected
