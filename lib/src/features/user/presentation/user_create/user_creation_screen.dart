@@ -5,14 +5,14 @@ import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
-class UserLogin extends StatefulWidget {
-  const UserLogin({super.key});
+class UserCreationScreen extends StatefulWidget {
+  const UserCreationScreen({super.key});
 
   @override
-  State<UserLogin> createState() => _UserLoginState();
+  State<UserCreationScreen> createState() => _UserCreationScreenState();
 }
 
-class _UserLoginState extends State<UserLogin> {
+class _UserCreationScreenState extends State<UserCreationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

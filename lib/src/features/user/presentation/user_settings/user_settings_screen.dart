@@ -6,14 +6,14 @@ import 'package:portes_ouvertes/src/features/user/presentation/user_settings/pro
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
-class UserSettings extends StatefulWidget {
-  const UserSettings({super.key});
+class UserSettingsScreen extends StatefulWidget {
+  const UserSettingsScreen({super.key});
 
   @override
-  State<UserSettings> createState() => _UserSettingsState();
+  State<UserSettingsScreen> createState() => _UserSettingsScreenState();
 }
 
-class _UserSettingsState extends State<UserSettings> {
+class _UserSettingsScreenState extends State<UserSettingsScreen> {
   bool isHover = false;
   @override
   Widget build(BuildContext context) {

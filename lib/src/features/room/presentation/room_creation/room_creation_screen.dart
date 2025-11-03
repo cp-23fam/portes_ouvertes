@@ -4,14 +4,14 @@ import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
-class RoomCreation extends StatefulWidget {
-  const RoomCreation({super.key});
+class RoomCreationScreen extends StatefulWidget {
+  const RoomCreationScreen({super.key});
 
   @override
-  State<RoomCreation> createState() => _RoomCreationState();
+  State<RoomCreationScreen> createState() => _RoomCreationScreenState();
 }
 
-class _RoomCreationState extends State<RoomCreation> {
+class _RoomCreationScreenState extends State<RoomCreationScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

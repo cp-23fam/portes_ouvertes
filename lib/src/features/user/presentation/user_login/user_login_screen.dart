@@ -8,14 +8,14 @@ import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 import 'package:sign_button/sign_button.dart';
 
-class UserCreation extends StatefulWidget {
-  const UserCreation({super.key});
+class UserLoginScreen extends StatefulWidget {
+  const UserLoginScreen({super.key});
 
   @override
-  State<UserCreation> createState() => _UserCreationState();
+  State<UserLoginScreen> createState() => _UserLoginScreenState();
 }
 
-class _UserCreationState extends State<UserCreation> {
+class _UserLoginScreenState extends State<UserLoginScreen> {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
 
