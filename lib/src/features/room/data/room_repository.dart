@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/features/room/domain/room.dart';
+import 'package:portes_ouvertes/src/features/user/data/user_repository.dart';
 import 'package:portes_ouvertes/src/features/user/domain/user.dart';
 
 class RoomRepository {
@@ -33,7 +34,7 @@ class RoomRepository {
       maxPlayers: maxPlayers,
     );
 
-    await doc.set(room.copyWith(id: doc.id).toMap());
+    await doc.set(room.toMap());
 
     return doc.id;
   }
@@ -47,10 +48,13 @@ final roomRepositoryProvider = Provider<RoomRepository>((ref) {
   return RoomRepository();
 });
 
-final roomListStreamProvider = StreamProvider<List<Room>>((ref) {
+final roomListStreamProvider = StreamProvider<List<Room>>((ref) async* {
   final roomRepo = ref.watch(roomRepositoryProvider);
-  // ref.read(roomRepositoryProvider).createRoom('Test room', 'abcdef', 8);
-  return roomRepo.watchRoomList();
+
+  // final userId = await ref.read(userRepositoryProvider).createUser('Fabrioche');
+  // roomRepo.createRoom('Test room', userId, 8);
+
+  yield* roomRepo.watchRoomList();
 });
 
 final roomStreamProvider = StreamProvider.family<Room, String>((ref, roomId) {

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/domain/room.dart';
+import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class RoomCard extends StatelessWidget {
@@ -67,7 +68,7 @@ class RoomCard extends StatelessWidget {
                       horizontal: Sizes.p20,
                     ),
                     child: Text(
-                      'Join',
+                      'Join'.hardcoded,
                       style: TextStyle(
                         color: AppColors.textColor,
                         fontSize: Sizes.p24,

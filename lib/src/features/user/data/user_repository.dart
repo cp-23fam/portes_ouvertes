@@ -19,6 +19,16 @@ class UserRepository {
   Future<void> deleteUser(UserId uid) async {
     await _collection.doc(uid).delete();
   }
+
+  Future<UserId> createUser(String username, {String? imageUrl}) async {
+    final doc = _collection.doc();
+
+    await doc.set(
+      User(uid: doc.id, username: username, imageUrl: imageUrl).toMap(),
+    );
+
+    return doc.id;
+  }
 }
 
 final userRepositoryProvider = Provider<UserRepository>((ref) {

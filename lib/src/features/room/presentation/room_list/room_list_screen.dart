@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -62,6 +63,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 });
               },
             ),
+
             Consumer(
               builder: (context, ref, child) {
                 final roomsStream = ref.watch(roomListStreamProvider);
@@ -91,6 +93,28 @@ class _RoomListScreenState extends State<RoomListScreen> {
                       const Center(child: CircularProgressIndicator()),
                 );
               },
+            ),
+            TextButton(
+              onPressed: () => context.goNamed(RouteNames.creation.name),
+              style: ButtonStyle(
+                backgroundColor: WidgetStateProperty.all<Color>(
+                  AppColors.goodColor,
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.symmetric(
+                  vertical: Sizes.p8,
+                  horizontal: Sizes.p20,
+                ),
+                child: Text(
+                  'Create a room'.hardcoded,
+                  style: TextStyle(
+                    color: AppColors.textColor,
+                    fontSize: Sizes.p24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
             ),
           ],
         ),
