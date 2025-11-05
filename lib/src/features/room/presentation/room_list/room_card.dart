@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/domain/room.dart';
+import 'package:portes_ouvertes/src/features/user/data/user_repository.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
@@ -13,7 +15,7 @@ class RoomCard extends StatefulWidget {
   });
 
   final Room room;
-  final VoidCallback onClick;
+  final VoidCallback? onClick;
   final bool isEnable;
 
   @override
@@ -43,7 +45,19 @@ class _RoomCardState extends State<RoomCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(widget.room.name),
-                    Text('Host : ${widget.room.hostId}'),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final hostFuture = ref.read(
+                          userStreamProvider(widget.room.hostId),
+                        );
+
+                        return hostFuture.when(
+                          data: (user) => Text('Host : ${user.username}'),
+                          error: (error, stackTrace) => Text(error.toString()),
+                          loading: () => const Text('Host : ...'),
+                        );
+                      },
+                    ),
                   ],
                 ),
                 Text(
@@ -75,7 +89,9 @@ class _RoomCardState extends State<RoomCard> {
                   onPressed: widget.onClick,
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
-                      AppColors.goodColor,
+                      widget.onClick == null
+                          ? AppColors.goodColor.withAlpha(100)
+                          : AppColors.goodColor,
                     ),
                   ),
                   child: Padding(

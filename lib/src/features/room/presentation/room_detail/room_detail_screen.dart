@@ -1,10 +1,14 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:portes_ouvertes/src/common_widgets/back_arrow.dart';
+import 'package:go_router/go_router.dart';
+import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_detail/no_user_card.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_detail/user_card.dart';
+import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
+import 'package:portes_ouvertes/src/routing/app_router.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class RoomDetailScreen extends StatefulWidget {
@@ -28,35 +32,51 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             return roomStream.when(
               data: (room) => Column(
                 children: [
-                  const Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [BackArrow()],
-                  ),
-                  Container(
-                    width: double.infinity,
-                    margin: const EdgeInsets.all(Sizes.p8),
-                    decoration: BoxDecoration(
-                      borderRadius: const BorderRadius.all(
-                        Radius.circular(Sizes.p20),
-                      ),
-                      color: AppColors.thirdColor,
-                      border: Border.all(
-                        width: 2.0,
-                        color: AppColors.iconColor,
-                      ),
-                    ),
-                    child: Padding(
-                      padding: const EdgeInsets.all(Sizes.p24),
-                      child: Text(
-                        room.name,
-                        style: TextStyle(
-                          color: AppColors.textColor,
-                          fontSize: Sizes.p32,
-                          fontWeight: FontWeight.bold,
+                  Padding(
+                    padding: const EdgeInsets.all(Sizes.p16),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text(
+                          room.name,
+                          style: const TextStyle(
+                            fontSize: 36.0,
+                            fontWeight: FontWeight.w800,
+                          ),
                         ),
-                      ),
+                        // TopActionButton(
+                        //   icon: Icons.arrow_back,
+                        //   onPressed: () =>
+                        //       context.goNamed(RouteNames.home.name),
+                        // ),
+                      ],
                     ),
                   ),
+                  // Container(
+                  //   width: double.infinity,
+                  //   margin: const EdgeInsets.all(Sizes.p8),
+                  //   decoration: BoxDecoration(
+                  //     borderRadius: const BorderRadius.all(
+                  //       Radius.circular(Sizes.p20),
+                  //     ),
+                  //     color: AppColors.thirdColor,
+                  //     border: Border.all(
+                  //       width: 2.0,
+                  //       color: AppColors.iconColor,
+                  //     ),
+                  //   ),
+                  //   child: Padding(
+                  //     padding: const EdgeInsets.all(Sizes.p24),
+                  //     child: Text(
+                  //       room.name,
+                  //       style: TextStyle(
+                  //         color: AppColors.textColor,
+                  //         fontSize: Sizes.p32,
+                  //         fontWeight: FontWeight.bold,
+                  //       ),
+                  //     ),
+                  //   ),
+                  // ),
                   Expanded(
                     child: ListView.separated(
                       itemBuilder: (context, index) => index < room.users.length
@@ -75,6 +95,28 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           const SizedBox(height: 4.0),
                       itemCount: room.maxPlayers,
                     ),
+                  ),
+                  ImportantButton(
+                    color: AppColors.deleteColor,
+                    text: 'Quitter'.hardcoded,
+                    onPressed: () async {
+                      context.goNamed(RouteNames.home.name);
+
+                      if (room.hostId ==
+                          FirebaseAuth.instance.currentUser!.uid) {
+                        print('Confirmation popup');
+                        await ref
+                            .read(roomRepositoryProvider)
+                            .deleteRoom(room.id);
+                      } else {
+                        await ref
+                            .read(roomRepositoryProvider)
+                            .quitRoom(
+                              room.id,
+                              FirebaseAuth.instance.currentUser!.uid,
+                            );
+                      }
+                    },
                   ),
                 ],
               ),
