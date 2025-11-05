@@ -43,7 +43,7 @@ classDiagram
 - [X] Afficher les détails d'une salle
 - [X] Afficher les joueurs d'une salle
 - [X] Afficher le host d'une salle
-- [ ] Se connecter
+- [X] Se connecter
 # Émulateurs
 Le projet utilise des émulateurs pour développer de tout.
 ## Mise en place
