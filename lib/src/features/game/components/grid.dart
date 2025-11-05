@@ -55,7 +55,6 @@ class Grid extends PositionComponent with TapCallbacks {
       ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 
-    // Draw lines
     for (int i = 0; i <= sizeInCells; i++) {
       canvas.drawLine(
         Offset(0, i * cellSize),
@@ -69,7 +68,6 @@ class Grid extends PositionComponent with TapCallbacks {
       );
     }
 
-    // Highlights
     for (final cell in highlightedCells) {
       canvas.drawRect(
         Rect.fromLTWH(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize),
@@ -77,7 +75,6 @@ class Grid extends PositionComponent with TapCallbacks {
       );
     }
 
-    // Selected cell
     if (selectedCell != null) {
       final center = Offset(
         selectedCell!.x * cellSize + cellSize / 2,

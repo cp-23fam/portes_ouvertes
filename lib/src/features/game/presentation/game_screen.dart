@@ -1,20 +1,22 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:portes_ouvertes/src/features/game/components/player.dart';
 import 'package:portes_ouvertes/src/features/game/syncstrike_game.dart';
 
 class GameScreen extends StatefulWidget {
   GameScreen({super.key});
   final SyncstrikeGame game = SyncstrikeGame();
+  final playerId = 'p1';
 
   @override
   State<GameScreen> createState() => _GameScreenState();
 }
 
 class _GameScreenState extends State<GameScreen> {
-  void _onActionSelected(String action) {
-    debugPrint('Action choisie : $action');
-    if (action == 'move') {
-      widget.game.highlightMoveZone('p1');
+  void _onActionSelected(PlayerActionType action) {
+    if (action == PlayerActionType.move) {
+      widget.game.highlightMoveZone(widget.playerId);
+      widget.game.players[0].action = PlayerActionType.move;
     } else {
       widget.game.grid.clearHighlights();
     }
@@ -42,13 +44,24 @@ class _GameScreenState extends State<GameScreen> {
               onPressed: () {
                 final selected = widget.game.grid.selectedCell;
                 if (selected != null) {
-                  final player = widget.game.players.firstWhere(
-                    (p) => p.id == 'p1',
-                  );
-                  player.moveToCell(selected);
-                  widget.game.grid.clearHighlights();
+                  widget.game.players[0].target = selected;
                 }
+                // widget.game.playerValidated(widget.playerId);
+
+                // --< Envoie du Player au Repository >--
+
+                // ---------------------------------------------
+                // final selected = widget.game.grid.selectedCell;
+                // if (selected != null) {
+                //   final player = widget.game.players.firstWhere(
+                //     (p) => p.id == widget.playerId,
+                //   );
+                //   player.moveToCell(selected);
+                //   widget.game.grid.clearHighlights();
+                // }
+                // ---------------------------------------------
               },
+              // style: ButtonStyle(backgroundColor: ),
               child: const Text('Valider'),
             ),
             Stack(
@@ -71,7 +84,8 @@ class _GameScreenState extends State<GameScreen> {
                               icon: Icons.arrow_forward,
                               color: Colors.green,
                               label: 'Move',
-                              onPressed: () => _onActionSelected('move'),
+                              onPressed: () =>
+                                  _onActionSelected(PlayerActionType.move),
                             ),
                           ),
 
@@ -81,7 +95,9 @@ class _GameScreenState extends State<GameScreen> {
                               icon: Icons.flash_on,
                               color: Colors.red,
                               label: 'Atk',
-                              onPressed: () => _onActionSelected('attackClose'),
+                              onPressed: () => _onActionSelected(
+                                PlayerActionType.attackClose,
+                              ),
                             ),
                           ),
 
@@ -91,8 +107,9 @@ class _GameScreenState extends State<GameScreen> {
                               icon: Icons.bolt,
                               color: Colors.orange,
                               label: 'Shoot',
-                              onPressed: () =>
-                                  _onActionSelected('attackDistance'),
+                              onPressed: () => _onActionSelected(
+                                PlayerActionType.attackDistance,
+                              ),
                             ),
                           ),
 
@@ -102,7 +119,8 @@ class _GameScreenState extends State<GameScreen> {
                               icon: Icons.shield,
                               color: Colors.blue,
                               label: 'Defend',
-                              onPressed: () => _onActionSelected('defend'),
+                              onPressed: () =>
+                                  _onActionSelected(PlayerActionType.defend),
                             ),
                           ),
                         ],
@@ -111,6 +129,20 @@ class _GameScreenState extends State<GameScreen> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            ValueListenableBuilder<int>(
+              valueListenable: widget.game.remainingTime,
+              builder: (context, seconds, _) {
+                return Text(
+                  'Temps restant : $seconds s',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                );
+              },
             ),
           ],
         ),

@@ -1,11 +1,14 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
 
+enum PlayerActionType { move, attackClose, attackDistance, defend, none }
+
 class Player extends PositionComponent {
   Player({
     required this.id,
     required this.color,
     required Vector2 position,
+    this.target,
     this.cellSize = 50,
   }) {
     this.position = Vector2(
@@ -18,10 +21,14 @@ class Player extends PositionComponent {
   }
 
   final String id;
+  PlayerActionType action = PlayerActionType.none;
+  Vector2? target;
+
   final Color color;
   bool isAlive = true;
   int lives = 3;
   final double cellSize;
+  bool hasValidated = false;
 
   void moveToCell(Vector2 cell) {
     position = Vector2(
