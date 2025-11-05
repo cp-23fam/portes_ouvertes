@@ -4,7 +4,7 @@ import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 // Black
 class AppColors {
   static Color firstColor = const Color.fromARGB(255, 155, 155, 155);
-  static Color secondeColor = const Color.fromRGBO(217, 217, 217, 0.5);
+  static Color secondColor = const Color.fromRGBO(217, 217, 217, 0.5);
   static Color thirdColor = const Color.fromRGBO(120, 120, 120, 0.4);
   static Color fourthColor = const Color.fromRGBO(65, 65, 65, 1);
   static Color fifthColor = const Color.fromRGBO(45, 45, 45, 1);

@@ -1,6 +1,7 @@
 {
     "material-icon-theme.folders.associations": {
-        "features": "interface",
-        "domain": "organism"
+        "features": "Interface",
+        "domain": "Organism",
+        "common_widgets": "Components"
     }
 }

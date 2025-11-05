@@ -39,11 +39,13 @@ classDiagram
 ```
 # Fonctionnalités
 - [X] Lister les salles présentes
-- [ ] Créer une salle
+- [X] Créer une salle
 - [X] Afficher les détails d'une salle
 - [X] Afficher les joueurs d'une salle
 - [X] Afficher le host d'une salle
 - [X] Se connecter
+- [ ] Rejoindre une salle
+- [ ] Quitter une salle
 # Émulateurs
 Le projet utilise des émulateurs pour développer de tout.
 ## Mise en place

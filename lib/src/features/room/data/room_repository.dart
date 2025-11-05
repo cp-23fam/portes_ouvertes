@@ -41,6 +41,28 @@ class RoomRepository {
   Future<void> updateRoom(Room room) async {
     await _collection.doc(room.id).set(room.toMap());
   }
+
+  Future<void> deleteRoom(RoomId id) async {
+    await _collection.doc(id).delete();
+  }
+
+  Future<void> joinRoom(RoomId id, UserId uid) async {
+    final roomData = await _collection.doc(id).get();
+    final Room room = Room.fromMap(roomData.data()!);
+    room.users.add(uid);
+
+    if (room.users.length + 1 <= room.maxPlayers) {
+      await updateRoom(room);
+    }
+  }
+
+  Future<void> quitRoom(RoomId id, UserId uid) async {
+    final roomData = await _collection.doc(id).get();
+    final Room room = Room.fromMap(roomData.data()!);
+    room.users.remove(uid);
+
+    await updateRoom(room);
+  }
 }
 
 final roomRepositoryProvider = Provider<RoomRepository>((ref) {

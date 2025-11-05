@@ -11,7 +11,7 @@ class ImportantButton extends StatefulWidget {
   });
   final String text;
   final Color color;
-  final Function() onPressed;
+  final VoidCallback? onPressed;
 
   @override
   State<ImportantButton> createState() => _ImportantButtonState();
@@ -22,17 +22,22 @@ class _ImportantButtonState extends State<ImportantButton> {
   @override
   Widget build(BuildContext context) {
     return InkWell(
+      borderRadius: BorderRadius.circular(Sizes.p20),
       onTap: widget.onPressed,
       child: MouseRegion(
         onEnter: (event) {
-          setState(() {
-            isHover = true;
-          });
+          if (widget.onPressed != null) {
+            setState(() {
+              isHover = true;
+            });
+          }
         },
         onExit: (event) {
-          setState(() {
-            isHover = false;
-          });
+          if (widget.onPressed != null) {
+            setState(() {
+              isHover = false;
+            });
+          }
         },
         child: Container(
           width: 200,

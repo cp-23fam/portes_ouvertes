@@ -1,9 +1,10 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portes_ouvertes/src/common_widgets/back_arrow.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
+import 'package:portes_ouvertes/src/common_widgets/top_action_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
@@ -45,9 +46,17 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [BackArrow()],
+            Padding(
+              padding: const EdgeInsets.all(Sizes.p16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TopActionButton(
+                    icon: Icons.arrow_back,
+                    onPressed: () => context.goNamed(RouteNames.home.name),
+                  ),
+                ],
+              ),
             ),
             Container(
               width: double.infinity,
@@ -69,7 +78,7 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                       Padding(
                         padding: const EdgeInsets.all(Sizes.p8),
                         child: Text(
-                          'Création de la Room'.hardcoded,
+                          'Création de la salle'.hardcoded,
                           style: TextStyle(
                             color: AppColors.textColor,
                             fontSize: Sizes.p32,
@@ -80,24 +89,46 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                       gapH24,
                       TextFormField(
                         controller: nameController,
+                        maxLength: 30,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer un nom de salle'.hardcoded;
+                          }
+
+                          return null;
+                        },
                         style: TextStyle(color: AppColors.titleColor),
                         decoration: InputDecoration(
-                          labelText: 'Nom de la Room'.hardcoded,
+                          labelText: 'Nom de la salle'.hardcoded,
                           border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(Sizes.p12),
                             ),
                           ),
                         ),
-                        onChanged: (value) {
-                          setState(() {
-                            // _searchQuery = value;
-                          });
-                        },
                       ),
                       gapH12,
                       TextFormField(
                         controller: numberController,
+                        keyboardType: TextInputType.number,
+                        inputFormatters: [
+                          FilteringTextInputFormatter.digitsOnly,
+                        ],
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Veuillez entrer un nombre de joueurs'
+                                .hardcoded;
+                          }
+
+                          final int number = int.parse(value);
+
+                          if (number < 2 || number > 8) {
+                            return 'Veuillez entrer un numéro entre 2 et 8'
+                                .hardcoded;
+                          }
+
+                          return null;
+                        },
                         style: TextStyle(color: AppColors.titleColor),
                         decoration: InputDecoration(
                           labelText: 'Nombre de joueurs'.hardcoded,
@@ -107,11 +138,6 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                             ),
                           ),
                         ),
-                        onChanged: (value) {
-                          setState(() {
-                            // _searchQuery = value;
-                          });
-                        },
                       ),
                       gapH20,
                     ],
@@ -126,7 +152,7 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                 builder: (context, ref, child) {
                   return ImportantButton(
                     color: AppColors.goodColor,
-                    text: 'Créer',
+                    text: 'Créer'.hardcoded,
                     onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
                         String id = await ref

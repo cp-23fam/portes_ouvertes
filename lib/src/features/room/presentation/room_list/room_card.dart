@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/domain/room.dart';
+import 'package:portes_ouvertes/src/features/user/data/user_repository.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
@@ -13,7 +15,7 @@ class RoomCard extends StatefulWidget {
   });
 
   final Room room;
-  final VoidCallback onClick;
+  final VoidCallback? onClick;
   final bool isEnable;
 
   @override
@@ -43,11 +45,25 @@ class _RoomCardState extends State<RoomCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(widget.room.name),
-                    Text('Host : ${widget.room.hostId}'),
+                    Consumer(
+                      builder: (context, ref, child) {
+                        final hostFuture = ref.read(
+                          userStreamProvider(widget.room.hostId),
+                        );
+
+                        return hostFuture.when(
+                          data: (user) =>
+                              Text('Créateur : ${user.username}'.hardcoded),
+                          error: (error, stackTrace) => Text(error.toString()),
+                          loading: () => Text('Créateur : ...'.hardcoded),
+                        );
+                      },
+                    ),
                   ],
                 ),
                 Text(
-                  '${widget.room.users.length} / ${widget.room.maxPlayers} Players',
+                  '${widget.room.users.length} / ${widget.room.maxPlayers} Joueurs'
+                      .hardcoded,
                 ),
               ],
             ),
@@ -63,31 +79,33 @@ class _RoomCardState extends State<RoomCard> {
                       Radius.circular(Sizes.p20),
                     ),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
                       vertical: Sizes.p4,
                       horizontal: Sizes.p8,
                     ),
-                    child: Center(child: Text('waiting ...')),
+                    child: Center(child: Text('recherche ...'.hardcoded)),
                   ),
                 ),
                 TextButton(
                   onPressed: widget.onClick,
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
-                      AppColors.goodColor,
+                      widget.onClick == null
+                          ? AppColors.goodColor.withAlpha(100)
+                          : AppColors.goodColor,
                     ),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: Sizes.p8,
-                      horizontal: Sizes.p20,
+                      horizontal: Sizes.p12,
                     ),
                     child: Text(
-                      'Join'.hardcoded,
+                      'Rejoindre'.hardcoded,
                       style: TextStyle(
                         color: AppColors.textColor,
-                        fontSize: Sizes.p24,
+                        fontSize: Sizes.p20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

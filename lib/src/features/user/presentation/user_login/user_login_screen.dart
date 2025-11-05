@@ -3,8 +3,8 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portes_ouvertes/src/common_widgets/back_arrow.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
+import 'package:portes_ouvertes/src/common_widgets/top_action_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/user/data/user_repository.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
@@ -22,6 +22,9 @@ class UserLoginScreen extends StatefulWidget {
 class _UserLoginScreenState extends State<UserLoginScreen> {
   late final TextEditingController emailController;
   late final TextEditingController passwordController;
+
+  String? emailErrorText;
+  String? passwordErrorText;
 
   @override
   void initState() {
@@ -43,10 +46,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
   Widget build(BuildContext context) {
     FirebaseAuth.instance.userChanges().listen((User? user) {
       if (user != null && context.mounted) {
-        context.goNamed(
-          RouteNames.userPage.name,
-          pathParameters: {'id': user.uid},
-        );
+        context.goNamed(RouteNames.user.name);
       }
     });
 
@@ -54,9 +54,17 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [BackArrow()],
+            Padding(
+              padding: const EdgeInsets.all(Sizes.p16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TopActionButton(
+                    icon: Icons.home,
+                    onPressed: () => context.goNamed(RouteNames.home.name),
+                  ),
+                ],
+              ),
             ),
             Container(
               width: double.infinity,
@@ -85,7 +93,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       ),
                     ),
                     gapH24,
-                    TextField(
+                    TextFormField(
+                      forceErrorText: emailErrorText,
                       controller: emailController,
                       style: TextStyle(color: AppColors.titleColor),
                       decoration: InputDecoration(
@@ -98,7 +107,8 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       ),
                     ),
                     gapH12,
-                    TextField(
+                    TextFormField(
+                      forceErrorText: passwordErrorText,
                       controller: passwordController,
                       style: TextStyle(color: AppColors.titleColor),
                       obscureText: true,
@@ -114,7 +124,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       ),
                     ),
                     gapH20,
-                    const Center(child: Text('ou')),
+                    Center(child: Text('ou'.hardcoded)),
                     gapH20,
                     Center(
                       child: Consumer(
@@ -126,23 +136,31 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                             onPressed: () async {
                               late final UserCredential userCredential;
 
-                              if (kIsWeb) {
-                                userCredential = await FirebaseAuth.instance
-                                    .signInWithPopup(GoogleAuthProvider());
-                              } else {
-                                userCredential = await FirebaseAuth.instance
-                                    .signInWithProvider(GoogleAuthProvider());
-                              }
+                              try {
+                                if (kIsWeb) {
+                                  userCredential = await FirebaseAuth.instance
+                                      .signInWithPopup(GoogleAuthProvider());
+                                } else {
+                                  userCredential = await FirebaseAuth.instance
+                                      .signInWithProvider(GoogleAuthProvider());
+                                }
 
-                              ref
-                                  .read(userRepositoryProvider)
-                                  .createUser(
-                                    userCredential.user!.uid,
-                                    userCredential.user!.displayName ??
-                                        userCredential.user!.email!.split(
-                                          '@',
-                                        )[0],
-                                  );
+                                ref
+                                    .read(userRepositoryProvider)
+                                    .createUser(
+                                      userCredential.user!.uid,
+                                      userCredential.user!.displayName ??
+                                          userCredential.user!.email!.split(
+                                            '@',
+                                          )[0],
+                                    );
+
+                                if (context.mounted) {
+                                  context.goNamed(RouteNames.home.name);
+                                }
+                              } on FirebaseAuthException catch (_) {
+                                //
+                              }
                             },
                           );
                         },
@@ -178,6 +196,10 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                           '@',
                                         )[0],
                                   );
+
+                              if (context.mounted) {
+                                context.goNamed(RouteNames.home.name);
+                              }
                             },
                           );
                         },
@@ -187,7 +209,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     Center(
                       child: SignInButton(
                         buttonType: ButtonType.mail,
-                        btnText: 'Créer un compte',
+                        btnText: 'Créer un compte'.hardcoded,
                         onPressed: () {
                           context.goNamed(RouteNames.signup.name);
                         },
@@ -202,12 +224,38 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               padding: const EdgeInsets.all(Sizes.p32),
               child: ImportantButton(
                 color: AppColors.goodColor,
-                text: 'Connexion',
-                onPressed: () {
-                  FirebaseAuth.instance.signInWithEmailAndPassword(
-                    email: emailController.value.text,
-                    password: passwordController.value.text,
-                  );
+                text: 'Connexion'.hardcoded,
+                onPressed: () async {
+                  try {
+                    await FirebaseAuth.instance.signInWithEmailAndPassword(
+                      email: emailController.value.text,
+                      password: passwordController.value.text,
+                    );
+
+                    if (context.mounted) {
+                      context.goNamed(RouteNames.home.name);
+                    }
+                  } on FirebaseAuthException catch (e) {
+                    switch (e.code) {
+                      case 'invalid-email':
+                        setState(() {
+                          emailErrorText = 'Invalid email'.hardcoded;
+                        });
+                      case 'user-not-found':
+                        setState(() {
+                          emailErrorText = 'Email not found'.hardcoded;
+                        });
+                      case 'wrong-password':
+                        setState(() {
+                          passwordErrorText = 'Invalid password'.hardcoded;
+                        });
+
+                      default:
+                        rethrow;
+                    }
+                  } catch (e) {
+                    rethrow;
+                  }
                 },
               ),
             ),

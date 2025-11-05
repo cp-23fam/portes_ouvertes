@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
+import 'package:portes_ouvertes/src/common_widgets/top_action_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_list/room_card.dart';
@@ -23,15 +24,11 @@ class _RoomListScreenState extends State<RoomListScreen> {
   @override
   Widget build(BuildContext context) {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
-      isConnected = user != null;
-      if (user == null) {
-        isConnected = false;
-        // print('User is currently signed out!');
-      } else {
-        isConnected = true;
-        // print('User is signed in!');
-      }
+      setState(() {
+        isConnected = user != null;
+      });
     });
+
     return Scaffold(
       body: SafeArea(
         child: Column(
@@ -42,7 +39,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 Padding(
                   padding: const EdgeInsets.all(Sizes.p20),
                   child: Text(
-                    'Lobby'.hardcoded,
+                    'Salles'.hardcoded,
                     style: const TextStyle(
                       fontSize: 36.0,
                       fontWeight: FontWeight.w800,
@@ -51,37 +48,9 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 ),
                 Padding(
                   padding: const EdgeInsets.all(16.0),
-                  child: InkWell(
-                    onTap: () {
-                      if (isConnected) {
-                        context.goNamed(RouteNames.userPage.name);
-                      } else {
-                        context.goNamed(RouteNames.login.name);
-                      }
-                    },
-                    child: MouseRegion(
-                      onEnter: (event) {
-                        setState(() {
-                          roundIsHover = true;
-                        });
-                      },
-                      onExit: (event) {
-                        setState(() {
-                          roundIsHover = false;
-                        });
-                      },
-                      child: CircleAvatar(
-                        backgroundColor: roundIsHover
-                            ? AppColors.thirdColor
-                            : AppColors.secondeColor,
-                        radius: 30.0,
-                        child: Icon(
-                          isConnected ? Icons.person_outline : Icons.login,
-                          color: AppColors.iconColor,
-                          size: 45.0,
-                        ),
-                      ),
-                    ),
+                  child: TopActionButton(
+                    icon: isConnected ? Icons.person : Icons.login,
+                    onPressed: () => context.goNamed(RouteNames.user.name),
                   ),
                 ),
               ],
@@ -89,7 +58,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
             TextField(
               style: TextStyle(color: AppColors.titleColor),
               decoration: InputDecoration(
-                labelText: 'Recherche une room'.hardcoded,
+                labelText: 'Rechercher une salle'.hardcoded,
                 prefixIcon: const Icon(Icons.search),
                 border: const OutlineInputBorder(),
               ),
@@ -99,93 +68,75 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 });
               },
             ),
-            isConnected
-                ? Consumer(
-                    builder: (context, ref, child) {
-                      final roomsStream = ref.watch(roomListStreamProvider);
+            Consumer(
+              builder: (context, ref, child) {
+                final roomsStream = ref.watch(roomListStreamProvider);
 
-                      return roomsStream.when(
-                        data: (rooms) => Expanded(
-                          child: ListView.separated(
-                            itemBuilder: (context, index) {
-                              return RoomCard(
-                                room: rooms[index],
-                                onClick: () {
-                                  context.goNamed(
-                                    RouteNames.details.name,
-                                    pathParameters: {'id': rooms[index].id},
-                                  );
-                                },
-                                isEnable: isConnected,
-                              );
-                            },
-                            separatorBuilder: (context, index) =>
-                                const SizedBox(height: 8.0),
-                            itemCount: rooms.length,
+                return roomsStream.when(
+                  data: (rooms) => Expanded(
+                    child: ListView.builder(
+                      itemBuilder: (context, index) {
+                        final room = rooms[index];
+
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: Sizes.p4,
+                            horizontal: Sizes.p12,
                           ),
-                        ),
-                        error: (error, stackTrace) => Expanded(
-                          child: Center(child: Text(error.toString())),
-                        ),
-                        loading: () => const Expanded(
-                          child: Center(child: CircularProgressIndicator()),
-                        ),
-                      );
-                    },
-                  )
-                : const Expanded(child: Center(child: Text('...'))),
+                          child: RoomCard(
+                            room: room,
+                            onClick: isConnected
+                                ? room.maxPlayers == room.users.length
+                                      ? null
+                                      : () async {
+                                          context.goNamed(
+                                            RouteNames.details.name,
+                                            pathParameters: {
+                                              'id': rooms[index].id,
+                                            },
+                                          );
+
+                                          await ref
+                                              .read(roomRepositoryProvider)
+                                              .joinRoom(
+                                                room.id,
+                                                FirebaseAuth
+                                                    .instance
+                                                    .currentUser!
+                                                    .uid,
+                                              );
+                                        }
+                                : null,
+                            isEnable: isConnected,
+                          ),
+                        );
+                      },
+                      itemCount: rooms.length,
+                    ),
+                  ),
+                  error: (error, stackTrace) =>
+                      Expanded(child: Center(child: Text(error.toString()))),
+                  loading: () => const Expanded(
+                    child: Center(child: CircularProgressIndicator()),
+                  ),
+                );
+              },
+            ),
             Padding(
               padding: const EdgeInsets.all(Sizes.p32),
               child: !isConnected
-                  ? Container(
-                      width: 200,
-                      height: 50,
-                      decoration: BoxDecoration(
-                        borderRadius: const BorderRadius.all(
-                          Radius.circular(Sizes.p20),
-                        ),
-                        color: AppColors.goodColor.withAlpha(100),
-                      ),
-                      child: Center(
-                        child: Text(
-                          'Créer une room',
-                          style: TextStyle(
-                            color: AppColors.textColor,
-                            fontSize: Sizes.p24,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                      ),
+                  ? ImportantButton(
+                      color: AppColors.goodColor.withAlpha(100),
+                      text: 'Créer une salle'.hardcoded,
+                      onPressed: null,
                     )
                   : ImportantButton(
                       color: AppColors.goodColor,
-                      text: 'Créer une room',
+                      text: 'Créer une salle'.hardcoded,
                       onPressed: () =>
                           context.goNamed(RouteNames.creation.name),
                     ),
             ),
-            // TextButton(
-            //   onPressed: () => context.goNamed(RouteNames.creation.name),
-            //   style: ButtonStyle(
-            //     backgroundColor: WidgetStateProperty.all<Color>(
-            //       AppColors.goodColor,
-            //     ),
-            //   ),
-            //   child: Padding(
-            //     padding: const EdgeInsets.symmetric(
-            //       vertical: Sizes.p8,
-            //       horizontal: Sizes.p20,
-            //     ),
-            //     child: Text(
-            //       'Create a room'.hardcoded,
-            //       style: TextStyle(
-            //         color: AppColors.textColor,
-            //         fontSize: Sizes.p24,
-            //         fontWeight: FontWeight.bold,
-            //       ),
-            //     ),
-            //   ),
-            // ),
           ],
         ),
       ),

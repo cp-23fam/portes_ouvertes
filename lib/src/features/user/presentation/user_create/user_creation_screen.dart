@@ -3,8 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:portes_ouvertes/src/common_widgets/back_arrow.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
+import 'package:portes_ouvertes/src/common_widgets/top_action_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/user/data/user_repository.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
@@ -52,9 +52,17 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
       body: SafeArea(
         child: Column(
           children: [
-            const Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [BackArrow()],
+            Padding(
+              padding: const EdgeInsets.all(Sizes.p16),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  TopActionButton(
+                    icon: Icons.arrow_back,
+                    onPressed: () => context.goNamed(RouteNames.user.name),
+                  ),
+                ],
+              ),
             ),
             Container(
               width: double.infinity,
@@ -88,7 +96,8 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un nom d\'utilisateur';
+                            return 'Veuillez entrer un nom d\'utilisateur'
+                                .hardcoded;
                           }
                           return null;
                         },
@@ -108,7 +117,8 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                         validator: (value) =>
                             EmailValidator.validate(value ?? '')
                             ? null
-                            : 'Veuillez entrer une adresse email valide',
+                            : 'Veuillez entrer une adresse mail valide'
+                                  .hardcoded,
                         controller: emailController,
                         style: TextStyle(color: AppColors.titleColor),
                         decoration: InputDecoration(
@@ -124,7 +134,7 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un mot de passe';
+                            return 'Veuillez entrer un mot de passe'.hardcoded;
                           }
 
                           return null;
@@ -147,7 +157,8 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                       TextFormField(
                         validator: (value) {
                           if (value != passwordController.text) {
-                            return 'Les mots de passe ne corespondent pas';
+                            return 'Les mots de passe ne corespondent pas'
+                                .hardcoded;
                           }
 
                           return null;
@@ -196,7 +207,7 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                             );
 
                         if (context.mounted) {
-                          context.goNamed(RouteNames.login.name);
+                          context.goNamed(RouteNames.user.name);
                         }
                       }
                     },

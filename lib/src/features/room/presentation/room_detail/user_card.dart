@@ -23,7 +23,7 @@ class UserCard extends StatelessWidget {
       ),
       child: Consumer(
         builder: (context, ref, child) {
-          final userFuture = ref.watch(userFutureProvider(userId));
+          final userFuture = ref.watch(userStreamProvider(userId));
 
           return userFuture.when(
             data: (user) => Padding(
@@ -31,7 +31,7 @@ class UserCard extends StatelessWidget {
               child: Row(
                 children: [
                   CircleAvatar(
-                    backgroundColor: AppColors.secondeColor,
+                    backgroundColor: AppColors.secondColor,
                     radius: 30.0,
                     child: Icon(
                       Icons.person_outline,
