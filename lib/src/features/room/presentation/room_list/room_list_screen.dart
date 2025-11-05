@@ -39,7 +39,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 Padding(
                   padding: const EdgeInsets.all(Sizes.p20),
                   child: Text(
-                    'Lobby'.hardcoded,
+                    'Salles'.hardcoded,
                     style: const TextStyle(
                       fontSize: 36.0,
                       fontWeight: FontWeight.w800,
@@ -58,7 +58,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
             TextField(
               style: TextStyle(color: AppColors.titleColor),
               decoration: InputDecoration(
-                labelText: 'Recherche une room'.hardcoded,
+                labelText: 'Rechercher une salle'.hardcoded,
                 prefixIcon: const Icon(Icons.search),
                 border: const OutlineInputBorder(),
               ),
@@ -89,6 +89,13 @@ class _RoomListScreenState extends State<RoomListScreen> {
                                 ? room.maxPlayers == room.users.length
                                       ? null
                                       : () async {
+                                          context.goNamed(
+                                            RouteNames.details.name,
+                                            pathParameters: {
+                                              'id': rooms[index].id,
+                                            },
+                                          );
+
                                           await ref
                                               .read(roomRepositoryProvider)
                                               .joinRoom(
@@ -98,15 +105,6 @@ class _RoomListScreenState extends State<RoomListScreen> {
                                                     .currentUser!
                                                     .uid,
                                               );
-
-                                          if (context.mounted) {
-                                            context.goNamed(
-                                              RouteNames.details.name,
-                                              pathParameters: {
-                                                'id': rooms[index].id,
-                                              },
-                                            );
-                                          }
                                         }
                                 : null,
                             isEnable: isConnected,

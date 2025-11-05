@@ -124,7 +124,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                       ),
                     ),
                     gapH20,
-                    const Center(child: Text('ou')),
+                    Center(child: Text('ou'.hardcoded)),
                     gapH20,
                     Center(
                       child: Consumer(
@@ -136,26 +136,30 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                             onPressed: () async {
                               late final UserCredential userCredential;
 
-                              if (kIsWeb) {
-                                userCredential = await FirebaseAuth.instance
-                                    .signInWithPopup(GoogleAuthProvider());
-                              } else {
-                                userCredential = await FirebaseAuth.instance
-                                    .signInWithProvider(GoogleAuthProvider());
-                              }
+                              try {
+                                if (kIsWeb) {
+                                  userCredential = await FirebaseAuth.instance
+                                      .signInWithPopup(GoogleAuthProvider());
+                                } else {
+                                  userCredential = await FirebaseAuth.instance
+                                      .signInWithProvider(GoogleAuthProvider());
+                                }
 
-                              ref
-                                  .read(userRepositoryProvider)
-                                  .createUser(
-                                    userCredential.user!.uid,
-                                    userCredential.user!.displayName ??
-                                        userCredential.user!.email!.split(
-                                          '@',
-                                        )[0],
-                                  );
+                                ref
+                                    .read(userRepositoryProvider)
+                                    .createUser(
+                                      userCredential.user!.uid,
+                                      userCredential.user!.displayName ??
+                                          userCredential.user!.email!.split(
+                                            '@',
+                                          )[0],
+                                    );
 
-                              if (context.mounted) {
-                                context.goNamed(RouteNames.home.name);
+                                if (context.mounted) {
+                                  context.goNamed(RouteNames.home.name);
+                                }
+                              } on FirebaseAuthException catch (_) {
+                                //
                               }
                             },
                           );
@@ -205,7 +209,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     Center(
                       child: SignInButton(
                         buttonType: ButtonType.mail,
-                        btnText: 'Créer un compte',
+                        btnText: 'Créer un compte'.hardcoded,
                         onPressed: () {
                           context.goNamed(RouteNames.signup.name);
                         },
@@ -220,7 +224,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
               padding: const EdgeInsets.all(Sizes.p32),
               child: ImportantButton(
                 color: AppColors.goodColor,
-                text: 'Connexion',
+                text: 'Connexion'.hardcoded,
                 onPressed: () async {
                   try {
                     await FirebaseAuth.instance.signInWithEmailAndPassword(

@@ -52,16 +52,18 @@ class _RoomCardState extends State<RoomCard> {
                         );
 
                         return hostFuture.when(
-                          data: (user) => Text('Host : ${user.username}'),
+                          data: (user) =>
+                              Text('Créateur : ${user.username}'.hardcoded),
                           error: (error, stackTrace) => Text(error.toString()),
-                          loading: () => const Text('Host : ...'),
+                          loading: () => Text('Créateur : ...'.hardcoded),
                         );
                       },
                     ),
                   ],
                 ),
                 Text(
-                  '${widget.room.users.length} / ${widget.room.maxPlayers} Players',
+                  '${widget.room.users.length} / ${widget.room.maxPlayers} Joueurs'
+                      .hardcoded,
                 ),
               ],
             ),
@@ -77,12 +79,12 @@ class _RoomCardState extends State<RoomCard> {
                       Radius.circular(Sizes.p20),
                     ),
                   ),
-                  child: const Padding(
-                    padding: EdgeInsets.symmetric(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(
                       vertical: Sizes.p4,
                       horizontal: Sizes.p8,
                     ),
-                    child: Center(child: Text('waiting ...')),
+                    child: Center(child: Text('recherche ...'.hardcoded)),
                   ),
                 ),
                 TextButton(
@@ -97,13 +99,13 @@ class _RoomCardState extends State<RoomCard> {
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                       vertical: Sizes.p8,
-                      horizontal: Sizes.p20,
+                      horizontal: Sizes.p12,
                     ),
                     child: Text(
-                      'Join'.hardcoded,
+                      'Rejoindre'.hardcoded,
                       style: TextStyle(
                         color: AppColors.textColor,
-                        fontSize: Sizes.p24,
+                        fontSize: Sizes.p20,
                         fontWeight: FontWeight.bold,
                       ),
                     ),

@@ -52,6 +52,20 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       ],
                     ),
                   ),
+                  Text(
+                    '${room.users.length} / ${room.maxPlayers} Joueurs'
+                        .hardcoded,
+                  ),
+                  gapH12,
+                  if (room.hostId == FirebaseAuth.instance.currentUser!.uid)
+                    ImportantButton(
+                      color: room.users.length > 1
+                          ? AppColors.goodColor
+                          : AppColors.goodColor.withAlpha(100),
+                      text: 'Commencer'.hardcoded,
+                      onPressed: room.users.length > 1 ? () {} : null,
+                    ),
+                  gapH8,
                   // Container(
                   //   width: double.infinity,
                   //   margin: const EdgeInsets.all(Sizes.p8),
@@ -96,27 +110,30 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       itemCount: room.maxPlayers,
                     ),
                   ),
-                  ImportantButton(
-                    color: AppColors.deleteColor,
-                    text: 'Quitter'.hardcoded,
-                    onPressed: () async {
-                      context.goNamed(RouteNames.home.name);
+                  Padding(
+                    padding: const EdgeInsets.all(Sizes.p32),
+                    child: ImportantButton(
+                      color: AppColors.deleteColor,
+                      text: 'Quitter'.hardcoded,
+                      onPressed: () async {
+                        context.goNamed(RouteNames.home.name);
 
-                      if (room.hostId ==
-                          FirebaseAuth.instance.currentUser!.uid) {
-                        print('Confirmation popup');
-                        await ref
-                            .read(roomRepositoryProvider)
-                            .deleteRoom(room.id);
-                      } else {
-                        await ref
-                            .read(roomRepositoryProvider)
-                            .quitRoom(
-                              room.id,
-                              FirebaseAuth.instance.currentUser!.uid,
-                            );
-                      }
-                    },
+                        if (room.hostId ==
+                            FirebaseAuth.instance.currentUser!.uid) {
+                          print('Confirmation popup');
+                          await ref
+                              .read(roomRepositoryProvider)
+                              .deleteRoom(room.id);
+                        } else {
+                          await ref
+                              .read(roomRepositoryProvider)
+                              .quitRoom(
+                                room.id,
+                                FirebaseAuth.instance.currentUser!.uid,
+                              );
+                        }
+                      },
+                    ),
                   ),
                 ],
               ),

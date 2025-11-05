@@ -96,7 +96,8 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un nom d\'utilisateur';
+                            return 'Veuillez entrer un nom d\'utilisateur'
+                                .hardcoded;
                           }
                           return null;
                         },
@@ -116,7 +117,8 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                         validator: (value) =>
                             EmailValidator.validate(value ?? '')
                             ? null
-                            : 'Veuillez entrer une adresse email valide',
+                            : 'Veuillez entrer une adresse mail valide'
+                                  .hardcoded,
                         controller: emailController,
                         style: TextStyle(color: AppColors.titleColor),
                         decoration: InputDecoration(
@@ -132,7 +134,7 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                       TextFormField(
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Veuillez entrer un mot de passe';
+                            return 'Veuillez entrer un mot de passe'.hardcoded;
                           }
 
                           return null;
@@ -155,7 +157,8 @@ class _UserCreationScreenState extends State<UserCreationScreen> {
                       TextFormField(
                         validator: (value) {
                           if (value != passwordController.text) {
-                            return 'Les mots de passe ne corespondent pas';
+                            return 'Les mots de passe ne corespondent pas'
+                                .hardcoded;
                           }
 
                           return null;

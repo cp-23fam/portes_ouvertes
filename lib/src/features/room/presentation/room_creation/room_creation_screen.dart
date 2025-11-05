@@ -92,14 +92,14 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                         maxLength: 30,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter a room name'.hardcoded;
+                            return 'Veuillez entrer un nom de salle'.hardcoded;
                           }
 
                           return null;
                         },
                         style: TextStyle(color: AppColors.titleColor),
                         decoration: InputDecoration(
-                          labelText: 'Nom de la Room'.hardcoded,
+                          labelText: 'Nom de la salle'.hardcoded,
                           border: const OutlineInputBorder(
                             borderRadius: BorderRadius.all(
                               Radius.circular(Sizes.p12),
@@ -116,13 +116,14 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                         ],
                         validator: (value) {
                           if (value == null || value.isEmpty) {
-                            return 'Please enter a number of players'.hardcoded;
+                            return 'Veuillez entrer un nombre de joueurs'
+                                .hardcoded;
                           }
 
                           final int number = int.parse(value);
 
                           if (number < 2 || number > 8) {
-                            return 'Please enter a number between 2 and 8'
+                            return 'Veuillez entrer un numéro entre 2 et 8'
                                 .hardcoded;
                           }
 
@@ -151,7 +152,7 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                 builder: (context, ref, child) {
                   return ImportantButton(
                     color: AppColors.goodColor,
-                    text: 'Créer',
+                    text: 'Créer'.hardcoded,
                     onPressed: () async {
                       if (_formKey.currentState?.validate() ?? false) {
                         String id = await ref
