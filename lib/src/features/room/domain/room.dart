@@ -1,5 +1,6 @@
 import 'dart:convert';
 
+import 'package:portes_ouvertes/src/features/game/domain/game.dart';
 import 'package:portes_ouvertes/src/features/user/domain/user.dart';
 
 typedef RoomId = String;
@@ -19,6 +20,7 @@ class Room {
       hostId: map['hostId'] as String,
       users: users == null ? [] : users.cast<String>(),
       status: RoomStatus.values.firstWhere((v) => v.name == map['status']),
+      gameId: map['gameId'],
       maxPlayers: map['maxPlayers'] as int,
     );
   }
@@ -30,6 +32,7 @@ class Room {
     required this.users,
     required this.status,
     required this.maxPlayers,
+    this.gameId,
   });
 
   final RoomId id;
@@ -37,6 +40,7 @@ class Room {
   final UserId hostId;
   final List<UserId> users;
   final RoomStatus status;
+  final GameId? gameId;
   final int maxPlayers;
 
   Map<String, dynamic> toMap() {
@@ -46,6 +50,7 @@ class Room {
       'hostId': hostId,
       'users': users,
       'status': status.name,
+      'gameId': gameId,
       'maxPlayers': maxPlayers,
     };
   }
@@ -58,6 +63,7 @@ class Room {
     UserId? hostId,
     List<UserId>? users,
     RoomStatus? status,
+    GameId? gameId,
     int? maxPlayers,
   }) {
     return Room(
@@ -66,6 +72,7 @@ class Room {
       hostId: hostId ?? this.hostId,
       users: users ?? this.users,
       status: status ?? this.status,
+      gameId: gameId ?? gameId,
       maxPlayers: maxPlayers ?? this.maxPlayers,
     );
   }

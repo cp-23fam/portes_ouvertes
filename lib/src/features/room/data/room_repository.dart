@@ -51,7 +51,7 @@ class RoomRepository {
     final Room room = Room.fromMap(roomData.data()!);
     room.users.add(uid);
 
-    if (room.users.length + 1 <= room.maxPlayers) {
+    if (room.users.length <= room.maxPlayers) {
       await updateRoom(room);
     }
   }
