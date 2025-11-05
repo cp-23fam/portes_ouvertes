@@ -31,6 +31,12 @@ class GameRepository {
 
     return doc.id;
   }
+
+  Future<Game> fetchGame(GameId id) async {
+    final docData = await _collection.doc(id).get();
+
+    return Game.fromMap(docData.data()!);
+  }
 }
 
 final gameRepositoryProvider = Provider<GameRepository>((ref) {
