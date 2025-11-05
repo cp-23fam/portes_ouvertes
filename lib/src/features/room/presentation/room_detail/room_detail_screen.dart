@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
+import 'package:portes_ouvertes/src/features/game/data/game_repository.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_detail/no_user_card.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_detail/user_card.dart';
@@ -63,7 +64,24 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                           ? AppColors.goodColor
                           : AppColors.goodColor.withAlpha(100),
                       text: 'Commencer'.hardcoded,
-                      onPressed: room.users.length > 1 ? () {} : null,
+                      onPressed: room.users.length > 1
+                          ? () async {
+                              final gameId = await ref
+                                  .read(gameRepositoryProvider)
+                                  .startGame(room.users);
+
+                              await ref
+                                  .read(roomRepositoryProvider)
+                                  .updateRoom(room.copyWith(gameId: gameId));
+
+                              if (context.mounted) {
+                                context.goNamed(
+                                  RouteNames.game.name,
+                                  pathParameters: {'id': gameId},
+                                );
+                              }
+                            }
+                          : null,
                     ),
                   gapH8,
                   // Container(
@@ -105,8 +123,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                               padding: EdgeInsets.all(Sizes.p8),
                               child: NoUserCard(),
                             ),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 4.0),
+                      separatorBuilder: (context, index) => gapH4,
                       itemCount: room.maxPlayers,
                     ),
                   ),
@@ -137,8 +154,24 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                   ),
                 ],
               ),
-              error: (error, stackTrace) =>
-                  Expanded(child: Center(child: Text(error.toString()))),
+              error: (error, stackTrace) {
+                // context.goNamed(RouteNames.home.name);
+
+                return Center(
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text('Salle de jeu introuvable'.hardcoded),
+                      gapH12,
+                      ImportantButton(
+                        color: AppColors.goodColor,
+                        text: 'Retour'.hardcoded,
+                        onPressed: () => context.goNamed(RouteNames.home.name),
+                      ),
+                    ],
+                  ),
+                );
+              },
               loading: () => Expanded(
                 child:
                     // Center(child: CircularProgressIndicator()),

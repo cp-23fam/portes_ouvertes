@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:go_router/go_router.dart';
+import 'package:portes_ouvertes/src/features/game/presentation/game_screen.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_creation/room_creation_screen.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_detail/room_detail_screen.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_list/room_list_screen.dart';
@@ -7,7 +8,7 @@ import 'package:portes_ouvertes/src/features/user/presentation/user_create/user_
 import 'package:portes_ouvertes/src/features/user/presentation/user_login/user_login_screen.dart';
 import 'package:portes_ouvertes/src/features/user/presentation/user_settings/user_settings_screen.dart';
 
-enum RouteNames { home, details, creation, login, signup, user }
+enum RouteNames { home, details, creation, login, signup, user, game }
 
 final router = GoRouter(
   routes: [
@@ -43,6 +44,11 @@ final router = GoRouter(
           builder: (context, state) => FirebaseAuth.instance.currentUser == null
               ? const UserLoginScreen()
               : const UserSettingsScreen(),
+        ),
+        GoRoute(
+          path: '/game/:id',
+          name: RouteNames.game.name,
+          builder: (context, state) => GameScreen(),
         ),
       ],
     ),
