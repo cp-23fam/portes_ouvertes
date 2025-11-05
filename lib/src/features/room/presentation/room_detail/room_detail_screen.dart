@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:portes_ouvertes/src/common_widgets/back_arrow.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_detail/no_user_card.dart';
@@ -27,25 +28,9 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             return roomStream.when(
               data: (room) => Column(
                 children: [
-                  Row(
+                  const Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.all(16.0),
-                        child: GestureDetector(
-                          onTap: () {},
-                          child: CircleAvatar(
-                            backgroundColor: AppColors.secondeColor,
-                            radius: 30.0,
-                            child: Icon(
-                              Icons.arrow_back,
-                              color: AppColors.iconColor,
-                              size: 45.0,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
+                    children: [BackArrow()],
                   ),
                   Container(
                     width: double.infinity,

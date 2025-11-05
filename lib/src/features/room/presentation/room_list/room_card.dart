@@ -4,7 +4,7 @@ import 'package:portes_ouvertes/src/features/room/domain/room.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
-class RoomCard extends StatelessWidget {
+class RoomCard extends StatefulWidget {
   const RoomCard({
     required this.room,
     required this.onClick,
@@ -16,6 +16,11 @@ class RoomCard extends StatelessWidget {
   final VoidCallback onClick;
   final bool isEnable;
 
+  @override
+  State<RoomCard> createState() => _RoomCardState();
+}
+
+class _RoomCardState extends State<RoomCard> {
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -36,9 +41,14 @@ class RoomCard extends StatelessWidget {
               children: [
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [Text(room.name), Text('Host : ${room.hostId}')],
+                  children: [
+                    Text(widget.room.name),
+                    Text('Host : ${widget.room.hostId}'),
+                  ],
                 ),
-                Text('${room.users.length} / ${room.maxPlayers} Players'),
+                Text(
+                  '${widget.room.users.length} / ${widget.room.maxPlayers} Players',
+                ),
               ],
             ),
             Column(
@@ -62,12 +72,10 @@ class RoomCard extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: isEnable ? onClick : () {},
+                  onPressed: widget.onClick,
                   style: ButtonStyle(
                     backgroundColor: WidgetStateProperty.all<Color>(
-                      isEnable
-                          ? AppColors.goodColor
-                          : AppColors.goodColor.withAlpha(50),
+                      AppColors.goodColor,
                     ),
                   ),
                   child: Padding(
