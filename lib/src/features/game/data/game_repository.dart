@@ -61,20 +61,66 @@ class GameRepository {
     final game = Game.fromMap(gameData.data()!);
 
     if (game.status == GameStatus.choosing) {
+      List<Vector2> dangerPos = [];
+
       for (PlayerModel p in game.players) {
         switch (p.action) {
-          case PlayerAction.move:
           case PlayerAction.melee:
+            final Vector2 basePos = p.position;
+
+            for (int i = 0; i < 9; i++) {
+              dangerPos.add(
+                Vector2(
+                  basePos.x + (i % 3) - 1,
+                  basePos.y + (i / 3).floor() - 1,
+                ),
+              );
+            }
           case PlayerAction.shoot:
-          case PlayerAction.block:
-          case PlayerAction.none:
+            final Vector2 basePos = p.actionPos!;
+
+            for (int i = 0; i < 3; i++) {
+              dangerPos.add(Vector2(basePos.x - 1 + i, basePos.y));
+            }
+            break;
+          default:
             continue;
         }
       }
 
+      final List<PlayerModel> players = [];
+
+      for (PlayerModel p in game.players) {
+        if (p.action == PlayerAction.move) {
+          try {
+            dangerPos.firstWhere(
+              (pos) => pos.x == p.actionPos!.x && pos.y == p.actionPos!.y,
+            );
+
+            players.add(p.copyWith(life: p.life - 1));
+          } catch (e) {
+            players.add(p);
+          }
+        } else {
+          try {
+            dangerPos.firstWhere(
+              (pos) => pos.x == p.position.x && pos.y == p.position.y,
+            );
+
+            players.add(p.copyWith(life: p.life - 1));
+          } catch (e) {
+            players.add(p);
+          }
+        }
+      }
+
+      print(players);
+
       await _collection
           .doc(id)
-          .set(game.copyWith(status: GameStatus.showing).toMap());
+          .set(
+            game.copyWith(status: GameStatus.showing, players: players).toMap(),
+          );
     }
   }
 }
