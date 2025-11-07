@@ -24,8 +24,8 @@ class MyGame extends FlameGame {
             player.uid.hashCode % 123,
             player.uid.hashCode % 176,
           ),
-          // position: player.position,
-          position: Vector2(4, 4),
+          position: player.position,
+          // position: Vector2(4, 4),
         ),
       );
     }
