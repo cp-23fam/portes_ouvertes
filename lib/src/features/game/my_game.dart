@@ -1,12 +1,16 @@
 import 'dart:async';
-import 'package:flame/game.dart';
+import 'package:flame/game.dart' hide Game;
 import 'package:flutter/material.dart';
 import 'package:portes_ouvertes/src/features/game/components/grid.dart';
 import 'package:portes_ouvertes/src/features/game/components/player.dart';
+import 'package:portes_ouvertes/src/features/game/data/game_repository.dart';
+import 'package:portes_ouvertes/src/features/game/domain/game.dart';
+import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
 
-class SyncstrikeGame extends FlameGame {
+class MyGame extends FlameGame {
   late Grid grid;
-  final List<Player> players = [];
+  late String gameId;
+  List<Player> players = [];
 
   DateTime? roundTimer;
   bool isPaused = false;
@@ -28,13 +32,13 @@ class SyncstrikeGame extends FlameGame {
         id: 'p1',
         color: const Color(0xFF00FF00),
         position: Vector2(1, 1),
-        cellSize: 54,
+        // cellSize: 54,
       ),
       Player(
         id: 'p2',
         color: const Color(0xFFFF0000),
         position: Vector2(7, 7),
-        cellSize: 54,
+        // cellSize: 54,
       ),
     ]);
 
@@ -42,14 +46,13 @@ class SyncstrikeGame extends FlameGame {
       add(player);
     }
 
+    gameId = await GameRepository().startGame(['p1', 'p2']);
+
     startRound();
   }
 
   void startRound() {
     isPaused = false;
-    for (Player player in players) {
-      player.hasValidated = false;
-    }
     roundTimer = DateTime.now().add(const Duration(seconds: 20));
   }
 
@@ -58,11 +61,6 @@ class SyncstrikeGame extends FlameGame {
     Future.delayed(const Duration(seconds: 5), () {
       startRound();
     });
-  }
-
-  void playerValidated(String playerId) {
-    final player = players.firstWhere((p) => p.id == playerId);
-    player.hasValidated = true;
   }
 
   @override
@@ -83,15 +81,22 @@ class SyncstrikeGame extends FlameGame {
     }
   }
 
-  void executeRoundEnd() {
-    // final p1 = players.firstWhere((p) => p.id == 'p1');
+  Future<void> executeRoundEnd() async {
+    Game repoGame = await GameRepository().fetchGame(gameId);
+    // players = repoGame.players;
 
-    // if (p1.hasValidated && p1.target != null) {
-    //   p1.moveToCell(p1.target!);
-    // } else {}
+    for (Player player in players) {
+      PlayerModel repoPlayer = repoGame.players.firstWhere(
+        (p) => p.uid == player.id,
+      );
 
-    // grid.clearHighlights();
-    // pauseRound();
+      player.action = repoPlayer.action;
+      // player.target = repoPlayer.target;
+      player.position = repoPlayer.position;
+    }
+
+    grid.clearHighlights();
+    pauseRound();
   }
 
   void highlightMoveZone(String playerId) {

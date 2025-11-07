@@ -1,7 +1,6 @@
 import 'package:flame/components.dart';
 import 'package:flutter/material.dart';
-
-enum PlayerActionType { move, attackClose, attackDistance, defend, none }
+import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
 
 class Player extends PositionComponent {
   Player({
@@ -9,7 +8,7 @@ class Player extends PositionComponent {
     required this.color,
     required Vector2 position,
     this.target,
-    this.cellSize = 50,
+    // this.cellSize = 54,
   }) {
     this.position = Vector2(
       position.x * cellSize + cellSize / 2,
@@ -21,14 +20,13 @@ class Player extends PositionComponent {
   }
 
   final String id;
-  PlayerActionType action = PlayerActionType.none;
+  PlayerAction action = PlayerAction.none;
   Vector2? target;
 
   final Color color;
   bool isAlive = true;
   int lives = 3;
-  final double cellSize;
-  bool hasValidated = false;
+  final double cellSize = 54;
 
   void moveToCell(Vector2 cell) {
     position = Vector2(

@@ -43,14 +43,12 @@ class Game {
   }
 
   factory Game.fromMap(Map<String, dynamic> map) {
+    final players = map['players'] as List<Map<String, dynamic>>;
+
     return Game(
       id: map['id'],
       timestamp: map['timestamp'] as int,
-      players: List<PlayerModel>.from(
-        (map['players'] as List<int>).map<PlayerModel>(
-          (x) => PlayerModel.fromMap(x as Map<String, dynamic>),
-        ),
-      ),
+      players: players.map((p) => PlayerModel.fromMap(p)).toList(),
       status: GameStatus.values.firstWhere((e) => e.name == map['status']),
     );
   }
