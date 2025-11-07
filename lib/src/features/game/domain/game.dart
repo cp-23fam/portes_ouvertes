@@ -8,7 +8,7 @@ typedef GameId = String;
 
 class Game {
   factory Game.fromMap(Map<String, dynamic> map) {
-    final players = map['players'] as List<Map<String, dynamic>>;
+    final players = map['players'] as List<dynamic>;
 
     return Game(
       id: map['id'],
@@ -17,7 +17,6 @@ class Game {
       status: GameStatus.values.firstWhere((e) => e.name == map['status']),
     );
   }
-
   factory Game.fromJson(String source) =>
       Game.fromMap(json.decode(source) as Map<String, dynamic>);
   Game({
@@ -53,17 +52,6 @@ class Game {
       'players': players.map((x) => x.toMap()).toList(),
       'status': status.name,
     };
-  }
-
-  factory Game.fromMap(Map<String, dynamic> map) {
-    final players = map['players'] as List<dynamic>;
-
-    return Game(
-      id: map['id'],
-      timestamp: map['timestamp'] as int,
-      players: players.map((p) => PlayerModel.fromMap(p)).toList(),
-      status: GameStatus.values.firstWhere((e) => e.name == map['status']),
-    );
   }
 
   String toJson() => json.encode(toMap());

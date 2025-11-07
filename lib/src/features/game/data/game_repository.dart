@@ -139,7 +139,5 @@ final gameStreamProvider = StreamProvider.autoDispose.family<Game, GameId>((
   id,
 ) {
   final gameRepo = ref.watch(gameRepositoryProvider);
-  await gameRepo.startGame(['p1', 'p2'], 'abcd');
-
-  yield* gameRepo.watchGame(id);
+  return gameRepo.watchGame(id);
 });
