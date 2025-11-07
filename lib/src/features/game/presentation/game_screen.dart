@@ -128,20 +128,20 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ],
             ),
-            const SizedBox(height: 20),
-            ValueListenableBuilder<int>(
-              valueListenable: widget.game.remainingTime,
-              builder: (context, seconds, _) {
-                return Text(
-                  'Temps restant : $seconds s',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                );
-              },
-            ),
+            // const SizedBox(height: 20),
+            // ValueListenableBuilder<int>(
+            //   valueListenable: widget.game.remainingTime,
+            //   builder: (context, seconds, _) {
+            //     return Text(
+            //       'Temps restant : $seconds s',
+            //       style: const TextStyle(
+            //         color: Colors.white,
+            //         fontSize: 22,
+            //         fontWeight: FontWeight.bold,
+            //       ),
+            //     );
+            //   },
+            // ),
           ],
         ),
       ),
