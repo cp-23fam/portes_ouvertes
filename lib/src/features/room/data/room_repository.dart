@@ -69,16 +69,22 @@ final roomRepositoryProvider = Provider<RoomRepository>((ref) {
   return RoomRepository();
 });
 
-final roomListStreamProvider = StreamProvider<List<Room>>((ref) async* {
+final roomListStreamProvider = StreamProvider.autoDispose<List<Room>>((
+  ref,
+) async* {
   final roomRepo = ref.watch(roomRepositoryProvider);
 
-  // final userId = await ref.read(userRepositoryProvider).createUser('Fabrioche');
-  // roomRepo.createRoom('Test room', userId, 8);
+  // for (int i = 0; i < 10; i++) {
+  //   await roomRepo.createRoom('Test room ${i + 1}', 'abcd', 8);
+  // }
 
   yield* roomRepo.watchRoomList();
 });
 
-final roomStreamProvider = StreamProvider.family<Room, String>((ref, roomId) {
+final roomStreamProvider = StreamProvider.autoDispose.family<Room, String>((
+  ref,
+  roomId,
+) {
   final roomRepo = ref.watch(roomRepositoryProvider);
 
   return roomRepo.watchRoom(roomId);
