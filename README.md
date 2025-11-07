@@ -80,7 +80,7 @@ classDiagram
 - [X] Lister les salles présentes
 - [X] Créer une salle
 - [X] Afficher les détails d'une salle
-- [ ] Afficher le status d'une salle
+- [X] Afficher le status d'une salle
 - [X] Afficher les joueurs d'une salle
 - [ ] Afficher les photos de profil des joueurs d'une salle
 - [X] Afficher le host d'une salle

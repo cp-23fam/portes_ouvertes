@@ -5,7 +5,7 @@ import 'package:portes_ouvertes/src/features/user/domain/user.dart';
 
 typedef RoomId = String;
 
-enum RoomStatus { creating, waiting, playing }
+enum RoomStatus { waiting, playing }
 
 class Room {
   factory Room.fromJson(String source) =>
