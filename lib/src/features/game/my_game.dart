@@ -82,18 +82,18 @@ class MyGame extends FlameGame {
   }
 
   Future<void> executeRoundEnd() async {
-    Game repoGame = await GameRepository().fetchGame(gameId);
+    // Game repoGame = await GameRepository().watchGame(gameId);
     // players = repoGame.players;
 
-    for (Player player in players) {
-      PlayerModel repoPlayer = repoGame.players.firstWhere(
-        (p) => p.uid == player.id,
-      );
+    // for (Player player in players) {
+    //   PlayerModel repoPlayer = repoGame.players.firstWhere(
+    //     (p) => p.uid == player.id,
+    //   );
 
-      player.action = repoPlayer.action;
-      // player.target = repoPlayer.target;
-      player.position = repoPlayer.position;
-    }
+    //   player.action = repoPlayer.action;
+    //   // player.target = repoPlayer.target;
+    //   player.position = repoPlayer.position;
+    // }
 
     grid.clearHighlights();
     pauseRound();
