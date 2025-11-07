@@ -32,10 +32,10 @@ class GameRepository {
     return doc.id;
   }
 
-  Future<Game> fetchGame(GameId id) async {
-    final docData = await _collection.doc(id).get();
+  Stream<Game> watchGame(GameId id) {
+    final docData = _collection.doc(id).snapshots();
 
-    return Game.fromMap(docData.data()!);
+    return docData.map((d) => Game.fromMap(d.data()!));
   }
 
   Future<void> updatePlayer(GameId id, PlayerModel player) async {
@@ -51,4 +51,9 @@ class GameRepository {
 
 final gameRepositoryProvider = Provider<GameRepository>((ref) {
   return GameRepository();
+});
+
+final gameStreamProvider = StreamProvider.family<Game, GameId>((ref, id) {
+  final gameRepo = ref.watch(gameRepositoryProvider);
+  return gameRepo.watchGame(id);
 });

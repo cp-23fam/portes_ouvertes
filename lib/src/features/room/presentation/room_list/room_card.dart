@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/domain/room.dart';
+import 'package:portes_ouvertes/src/features/room/presentation/room_list/room_status.dart';
 import 'package:portes_ouvertes/src/features/user/data/user_repository.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
@@ -71,22 +72,7 @@ class _RoomCardState extends State<RoomCard> {
               crossAxisAlignment: CrossAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: Sizes.p8),
-                  decoration: BoxDecoration(
-                    color: AppColors.specialColor.withAlpha(100),
-                    borderRadius: const BorderRadius.all(
-                      Radius.circular(Sizes.p20),
-                    ),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.symmetric(
-                      vertical: Sizes.p4,
-                      horizontal: Sizes.p8,
-                    ),
-                    child: Center(child: Text('recherche ...'.hardcoded)),
-                  ),
-                ),
+                RoomStatusWidget(status: widget.room.status),
                 TextButton(
                   onPressed: widget.onClick,
                   style: ButtonStyle(

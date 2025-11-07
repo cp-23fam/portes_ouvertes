@@ -6,6 +6,7 @@ import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/game/data/game_repository.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
+import 'package:portes_ouvertes/src/features/room/domain/room.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_detail/no_user_card.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_detail/user_card.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
@@ -72,7 +73,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
 
                               await ref
                                   .read(roomRepositoryProvider)
-                                  .updateRoom(room.copyWith(gameId: gameId));
+                                  .updateRoom(
+                                    room.copyWith(
+                                      gameId: gameId,
+                                      status: RoomStatus.playing,
+                                    ),
+                                  );
 
                               if (context.mounted) {
                                 context.goNamed(
