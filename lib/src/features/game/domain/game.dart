@@ -2,11 +2,24 @@ import 'dart:convert';
 
 import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
 
-enum GameStatus { starting, playing, ended }
+enum GameStatus { starting, choosing, showing, ended }
 
 typedef GameId = String;
 
 class Game {
+  factory Game.fromMap(Map<String, dynamic> map) {
+    final players = map['players'] as List<Map<String, dynamic>>;
+
+    return Game(
+      id: map['id'],
+      timestamp: map['timestamp'] as int,
+      players: players.map((p) => PlayerModel.fromMap(p)).toList(),
+      status: GameStatus.values.firstWhere((e) => e.name == map['status']),
+    );
+  }
+
+  factory Game.fromJson(String source) =>
+      Game.fromMap(json.decode(source) as Map<String, dynamic>);
   Game({
     required this.id,
     required this.timestamp,
@@ -42,19 +55,5 @@ class Game {
     };
   }
 
-  factory Game.fromMap(Map<String, dynamic> map) {
-    final players = map['players'] as List<Map<String, dynamic>>;
-
-    return Game(
-      id: map['id'],
-      timestamp: map['timestamp'] as int,
-      players: players.map((p) => PlayerModel.fromMap(p)).toList(),
-      status: GameStatus.values.firstWhere((e) => e.name == map['status']),
-    );
-  }
-
   String toJson() => json.encode(toMap());
-
-  factory Game.fromJson(String source) =>
-      Game.fromMap(json.decode(source) as Map<String, dynamic>);
 }

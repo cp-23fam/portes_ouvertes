@@ -21,6 +21,8 @@ class GameRepository {
               (id) => PlayerModel(
                 uid: id,
                 position: Vector2(0, 0),
+                life: 3,
+                actionPos: null,
                 action: PlayerAction.none,
               ),
             )
@@ -52,6 +54,28 @@ class GameRepository {
     await _collection
         .doc(id)
         .set(game.copyWith(timestamp: game.timestamp + milliseconds).toMap());
+  }
+
+  Future<void> playActions(GameId id) async {
+    final gameData = await _collection.doc(id).get();
+    final game = Game.fromMap(gameData.data()!);
+
+    if (game.status == GameStatus.choosing) {
+      for (PlayerModel p in game.players) {
+        switch (p.action) {
+          case PlayerAction.move:
+          case PlayerAction.melee:
+          case PlayerAction.shoot:
+          case PlayerAction.block:
+          case PlayerAction.none:
+            continue;
+        }
+      }
+
+      await _collection
+          .doc(id)
+          .set(game.copyWith(status: GameStatus.showing).toMap());
+    }
   }
 }
 

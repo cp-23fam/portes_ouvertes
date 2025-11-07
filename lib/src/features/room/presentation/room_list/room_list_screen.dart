@@ -6,6 +6,7 @@ import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/common_widgets/top_action_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
+import 'package:portes_ouvertes/src/features/room/domain/room.dart';
 import 'package:portes_ouvertes/src/features/room/presentation/room_list/room_card.dart';
 import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/routing/app_router.dart';
@@ -87,6 +88,8 @@ class _RoomListScreenState extends State<RoomListScreen> {
                             room: room,
                             onClick: isConnected
                                 ? room.maxPlayers == room.users.length
+                                      ? null
+                                      : room.status == RoomStatus.playing
                                       ? null
                                       : () async {
                                           context.goNamed(
