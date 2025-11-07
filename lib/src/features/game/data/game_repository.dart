@@ -15,7 +15,7 @@ class GameRepository {
     await doc.set(
       Game(
         id: doc.id,
-        timestamp: DateTime.now().millisecondsSinceEpoch + 6 * 1000,
+        timestamp: DateTime.now().millisecondsSinceEpoch + 20 * 1000,
         players: players
             .map(
               (id) => PlayerModel(
@@ -38,14 +38,20 @@ class GameRepository {
     return docData.map((d) => Game.fromMap(d.data()!));
   }
 
-  Future<void> updatePlayer(GameId id, PlayerModel player) async {
+  Future<void> playerSendAction(
+    GameId id,
+    PlayerModel player, [
+    int milliseconds = 10 * 1000,
+  ]) async {
     final gameData = await _collection.doc(id).get();
     final game = Game.fromMap(gameData.data()!);
 
     final playerIndex = game.players.indexWhere((p) => p.uid == player.uid);
     game.players[playerIndex] = player;
 
-    await _collection.doc(id).set(game.toMap());
+    await _collection
+        .doc(id)
+        .set(game.copyWith(timestamp: game.timestamp + milliseconds).toMap());
   }
 }
 
