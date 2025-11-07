@@ -1,11 +1,11 @@
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
-import 'package:portes_ouvertes/src/features/game/components/player.dart';
-import 'package:portes_ouvertes/src/features/game/syncstrike_game.dart';
+import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
+import 'package:portes_ouvertes/src/features/game/my_game.dart';
 
 class GameScreen extends StatefulWidget {
   GameScreen({super.key});
-  final SyncstrikeGame game = SyncstrikeGame();
+  final MyGame game = MyGame();
   final playerId = 'p1';
 
   @override
@@ -13,10 +13,10 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  void _onActionSelected(PlayerActionType action) {
-    if (action == PlayerActionType.move) {
+  void _onActionSelected(PlayerAction action) {
+    if (action == PlayerAction.move) {
       widget.game.highlightMoveZone(widget.playerId);
-      widget.game.players[0].action = PlayerActionType.move;
+      widget.game.players[0].action = PlayerAction.move;
     } else {
       widget.game.grid.clearHighlights();
     }
@@ -85,7 +85,7 @@ class _GameScreenState extends State<GameScreen> {
                               color: Colors.green,
                               label: 'Move',
                               onPressed: () =>
-                                  _onActionSelected(PlayerActionType.move),
+                                  _onActionSelected(PlayerAction.move),
                             ),
                           ),
 
@@ -95,9 +95,8 @@ class _GameScreenState extends State<GameScreen> {
                               icon: Icons.flash_on,
                               color: Colors.red,
                               label: 'Atk',
-                              onPressed: () => _onActionSelected(
-                                PlayerActionType.attackClose,
-                              ),
+                              onPressed: () =>
+                                  _onActionSelected(PlayerAction.melee),
                             ),
                           ),
 
@@ -107,9 +106,8 @@ class _GameScreenState extends State<GameScreen> {
                               icon: Icons.bolt,
                               color: Colors.orange,
                               label: 'Shoot',
-                              onPressed: () => _onActionSelected(
-                                PlayerActionType.attackDistance,
-                              ),
+                              onPressed: () =>
+                                  _onActionSelected(PlayerAction.shoot),
                             ),
                           ),
 
@@ -120,7 +118,7 @@ class _GameScreenState extends State<GameScreen> {
                               color: Colors.blue,
                               label: 'Defend',
                               onPressed: () =>
-                                  _onActionSelected(PlayerActionType.defend),
+                                  _onActionSelected(PlayerAction.block),
                             ),
                           ),
                         ],
