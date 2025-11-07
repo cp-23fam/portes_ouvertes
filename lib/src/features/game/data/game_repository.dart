@@ -83,7 +83,10 @@ final gameRepositoryProvider = Provider<GameRepository>((ref) {
   return GameRepository();
 });
 
-final gameStreamProvider = StreamProvider.family<Game, GameId>((ref, id) {
+final gameStreamProvider = StreamProvider.autoDispose.family<Game, GameId>((
+  ref,
+  id,
+) {
   final gameRepo = ref.watch(gameRepositoryProvider);
   return gameRepo.watchGame(id);
 });

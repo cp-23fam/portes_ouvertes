@@ -35,7 +35,10 @@ final userRepositoryProvider = Provider<UserRepository>((ref) {
   return UserRepository();
 });
 
-final userStreamProvider = StreamProvider.family<User, String>((ref, uid) {
+final userStreamProvider = StreamProvider.autoDispose.family<User, String>((
+  ref,
+  uid,
+) {
   final userRepo = ref.watch(userRepositoryProvider);
 
   return userRepo.getUserFrom(uid);

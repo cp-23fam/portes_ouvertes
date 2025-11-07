@@ -32,134 +32,141 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             final roomStream = ref.watch(roomStreamProvider(widget.roomId!));
 
             return roomStream.when(
-              data: (room) => Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(Sizes.p16),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Text(
-                          room.name,
-                          style: const TextStyle(
-                            fontSize: 36.0,
-                            fontWeight: FontWeight.w800,
-                          ),
-                        ),
-                        // TopActionButton(
-                        //   icon: Icons.arrow_back,
-                        //   onPressed: () =>
-                        //       context.goNamed(RouteNames.home.name),
-                        // ),
-                      ],
-                    ),
-                  ),
-                  Text(
-                    '${room.users.length} / ${room.maxPlayers} Joueurs'
-                        .hardcoded,
-                  ),
-                  gapH12,
-                  if (room.hostId == FirebaseAuth.instance.currentUser!.uid)
-                    ImportantButton(
-                      color: room.users.length > 1
-                          ? AppColors.goodColor
-                          : AppColors.goodColor.withAlpha(100),
-                      text: 'Commencer'.hardcoded,
-                      onPressed: room.users.length > 1
-                          ? () async {
-                              final gameId = await ref
-                                  .read(gameRepositoryProvider)
-                                  .startGame(room.users);
+              data: (room) {
+                if (room.gameId != null) {
+                  context.goNamed(RouteNames.game.name);
+                }
 
-                              await ref
-                                  .read(roomRepositoryProvider)
-                                  .updateRoom(
-                                    room.copyWith(
-                                      gameId: gameId,
-                                      status: RoomStatus.playing,
-                                    ),
-                                  );
-
-                              if (context.mounted) {
-                                context.goNamed(
-                                  RouteNames.game.name,
-                                  pathParameters: {'id': gameId},
-                                );
-                              }
-                            }
-                          : null,
-                    ),
-                  gapH8,
-                  // Container(
-                  //   width: double.infinity,
-                  //   margin: const EdgeInsets.all(Sizes.p8),
-                  //   decoration: BoxDecoration(
-                  //     borderRadius: const BorderRadius.all(
-                  //       Radius.circular(Sizes.p20),
-                  //     ),
-                  //     color: AppColors.thirdColor,
-                  //     border: Border.all(
-                  //       width: 2.0,
-                  //       color: AppColors.iconColor,
-                  //     ),
-                  //   ),
-                  //   child: Padding(
-                  //     padding: const EdgeInsets.all(Sizes.p24),
-                  //     child: Text(
-                  //       room.name,
-                  //       style: TextStyle(
-                  //         color: AppColors.textColor,
-                  //         fontSize: Sizes.p32,
-                  //         fontWeight: FontWeight.bold,
-                  //       ),
-                  //     ),
-                  //   ),
-                  // ),
-                  Expanded(
-                    child: ListView.separated(
-                      itemBuilder: (context, index) => index < room.users.length
-                          ? Padding(
-                              padding: const EdgeInsets.all(Sizes.p8),
-                              child: UserCard(
-                                userId: room.users[index],
-                                isHost: index == 0 ? true : false,
-                              ),
-                            )
-                          : const Padding(
-                              padding: EdgeInsets.all(Sizes.p8),
-                              child: NoUserCard(),
+                return Column(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.all(Sizes.p16),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text(
+                            room.name,
+                            style: const TextStyle(
+                              fontSize: 36.0,
+                              fontWeight: FontWeight.w800,
                             ),
-                      separatorBuilder: (context, index) => gapH4,
-                      itemCount: room.maxPlayers,
+                          ),
+                          // TopActionButton(
+                          //   icon: Icons.arrow_back,
+                          //   onPressed: () =>
+                          //       context.goNamed(RouteNames.home.name),
+                          // ),
+                        ],
+                      ),
                     ),
-                  ),
-                  Padding(
-                    padding: const EdgeInsets.all(Sizes.p32),
-                    child: ImportantButton(
-                      color: AppColors.deleteColor,
-                      text: 'Quitter'.hardcoded,
-                      onPressed: () async {
-                        context.goNamed(RouteNames.home.name);
+                    Text(
+                      '${room.users.length} / ${room.maxPlayers} Joueurs'
+                          .hardcoded,
+                    ),
+                    gapH12,
+                    if (room.hostId == FirebaseAuth.instance.currentUser!.uid)
+                      ImportantButton(
+                        color: room.users.length > 1
+                            ? AppColors.goodColor
+                            : AppColors.goodColor.withAlpha(100),
+                        text: 'Commencer'.hardcoded,
+                        onPressed: room.users.length > 1
+                            ? () async {
+                                final gameId = await ref
+                                    .read(gameRepositoryProvider)
+                                    .startGame(room.users);
 
-                        if (room.hostId ==
-                            FirebaseAuth.instance.currentUser!.uid) {
-                          print('Confirmation popup');
-                          await ref
-                              .read(roomRepositoryProvider)
-                              .deleteRoom(room.id);
-                        } else {
-                          await ref
-                              .read(roomRepositoryProvider)
-                              .quitRoom(
-                                room.id,
-                                FirebaseAuth.instance.currentUser!.uid,
-                              );
-                        }
-                      },
+                                await ref
+                                    .read(roomRepositoryProvider)
+                                    .updateRoom(
+                                      room.copyWith(
+                                        gameId: gameId,
+                                        status: RoomStatus.playing,
+                                      ),
+                                    );
+
+                                if (context.mounted) {
+                                  context.goNamed(
+                                    RouteNames.game.name,
+                                    pathParameters: {'id': gameId},
+                                  );
+                                }
+                              }
+                            : null,
+                      ),
+                    gapH8,
+                    // Container(
+                    //   width: double.infinity,
+                    //   margin: const EdgeInsets.all(Sizes.p8),
+                    //   decoration: BoxDecoration(
+                    //     borderRadius: const BorderRadius.all(
+                    //       Radius.circular(Sizes.p20),
+                    //     ),
+                    //     color: AppColors.thirdColor,
+                    //     border: Border.all(
+                    //       width: 2.0,
+                    //       color: AppColors.iconColor,
+                    //     ),
+                    //   ),
+                    //   child: Padding(
+                    //     padding: const EdgeInsets.all(Sizes.p24),
+                    //     child: Text(
+                    //       room.name,
+                    //       style: TextStyle(
+                    //         color: AppColors.textColor,
+                    //         fontSize: Sizes.p32,
+                    //         fontWeight: FontWeight.bold,
+                    //       ),
+                    //     ),
+                    //   ),
+                    // ),
+                    Expanded(
+                      child: ListView.separated(
+                        itemBuilder: (context, index) =>
+                            index < room.users.length
+                            ? Padding(
+                                padding: const EdgeInsets.all(Sizes.p8),
+                                child: UserCard(
+                                  userId: room.users[index],
+                                  isHost: index == 0 ? true : false,
+                                ),
+                              )
+                            : const Padding(
+                                padding: EdgeInsets.all(Sizes.p8),
+                                child: NoUserCard(),
+                              ),
+                        separatorBuilder: (context, index) => gapH4,
+                        itemCount: room.maxPlayers,
+                      ),
                     ),
-                  ),
-                ],
-              ),
+                    Padding(
+                      padding: const EdgeInsets.all(Sizes.p32),
+                      child: ImportantButton(
+                        color: AppColors.deleteColor,
+                        text: 'Quitter'.hardcoded,
+                        onPressed: () async {
+                          context.goNamed(RouteNames.home.name);
+
+                          if (room.hostId ==
+                              FirebaseAuth.instance.currentUser!.uid) {
+                            print('Confirmation popup');
+                            await ref
+                                .read(roomRepositoryProvider)
+                                .deleteRoom(room.id);
+                          } else {
+                            await ref
+                                .read(roomRepositoryProvider)
+                                .quitRoom(
+                                  room.id,
+                                  FirebaseAuth.instance.currentUser!.uid,
+                                );
+                          }
+                        },
+                      ),
+                    ),
+                  ],
+                );
+              },
               error: (error, stackTrace) {
                 // context.goNamed(RouteNames.home.name);
 

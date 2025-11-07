@@ -22,6 +22,8 @@ class RoomListScreen extends StatefulWidget {
 class _RoomListScreenState extends State<RoomListScreen> {
   late bool isConnected = false;
   bool roundIsHover = false;
+
+  String _searchQuery = '';
   @override
   Widget build(BuildContext context) {
     FirebaseAuth.instance.authStateChanges().listen((User? user) {
@@ -64,9 +66,7 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 border: const OutlineInputBorder(),
               ),
               onChanged: (value) {
-                setState(() {
-                  // _searchQuery = value;
-                });
+                _searchQuery = value;
               },
             ),
             Consumer(
@@ -74,49 +74,53 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 final roomsStream = ref.watch(roomListStreamProvider);
 
                 return roomsStream.when(
-                  data: (rooms) => Expanded(
-                    child: ListView.builder(
-                      itemBuilder: (context, index) {
-                        final room = rooms[index];
+                  data: (values) {
+                    final List<Room> rooms = filterRooms(_searchQuery, values);
 
-                        return Padding(
-                          padding: const EdgeInsets.symmetric(
-                            vertical: Sizes.p4,
-                            horizontal: Sizes.p12,
-                          ),
-                          child: RoomCard(
-                            room: room,
-                            onClick: isConnected
-                                ? room.maxPlayers == room.users.length
-                                      ? null
-                                      : room.status == RoomStatus.playing
-                                      ? null
-                                      : () async {
-                                          context.goNamed(
-                                            RouteNames.details.name,
-                                            pathParameters: {
-                                              'id': rooms[index].id,
-                                            },
-                                          );
+                    return Expanded(
+                      child: ListView.builder(
+                        itemBuilder: (context, index) {
+                          final room = rooms[index];
 
-                                          await ref
-                                              .read(roomRepositoryProvider)
-                                              .joinRoom(
-                                                room.id,
-                                                FirebaseAuth
-                                                    .instance
-                                                    .currentUser!
-                                                    .uid,
-                                              );
-                                        }
-                                : null,
-                            isEnable: isConnected,
-                          ),
-                        );
-                      },
-                      itemCount: rooms.length,
-                    ),
-                  ),
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(
+                              vertical: Sizes.p4,
+                              horizontal: Sizes.p12,
+                            ),
+                            child: RoomCard(
+                              room: room,
+                              onClick: isConnected
+                                  ? room.maxPlayers == room.users.length
+                                        ? null
+                                        : room.status == RoomStatus.playing
+                                        ? null
+                                        : () async {
+                                            context.goNamed(
+                                              RouteNames.details.name,
+                                              pathParameters: {
+                                                'id': rooms[index].id,
+                                              },
+                                            );
+
+                                            await ref
+                                                .read(roomRepositoryProvider)
+                                                .joinRoom(
+                                                  room.id,
+                                                  FirebaseAuth
+                                                      .instance
+                                                      .currentUser!
+                                                      .uid,
+                                                );
+                                          }
+                                  : null,
+                              isEnable: isConnected,
+                            ),
+                          );
+                        },
+                        itemCount: rooms.length,
+                      ),
+                    );
+                  },
                   error: (error, stackTrace) =>
                       Expanded(child: Center(child: Text(error.toString()))),
                   loading: () => const Expanded(
