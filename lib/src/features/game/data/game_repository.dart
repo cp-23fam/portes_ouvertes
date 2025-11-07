@@ -37,6 +37,16 @@ class GameRepository {
 
     return Game.fromMap(docData.data()!);
   }
+
+  Future<void> updatePlayer(GameId id, PlayerModel player) async {
+    final gameData = await _collection.doc(id).get();
+    final game = Game.fromMap(gameData.data()!);
+
+    final playerIndex = game.players.indexWhere((p) => p.uid == player.uid);
+    game.players[playerIndex] = player;
+
+    await _collection.doc(id).set(game.toMap());
+  }
 }
 
 final gameRepositoryProvider = Provider<GameRepository>((ref) {
