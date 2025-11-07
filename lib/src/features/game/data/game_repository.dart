@@ -9,8 +9,13 @@ class GameRepository {
   final _db = FirebaseFirestore.instance;
   late final _collection = _db.collection('games');
 
-  Future<String> startGame(List<UserId> players) async {
-    final doc = _collection.doc();
+  Future<String> startGame(List<UserId> players, [String id = '']) async {
+    late final doc;
+    if (id.isEmpty) {
+      doc = _collection.doc();
+    } else {
+      doc = _collection.doc(id);
+    }
 
     await doc.set(
       Game(
@@ -53,7 +58,12 @@ final gameRepositoryProvider = Provider<GameRepository>((ref) {
   return GameRepository();
 });
 
-final gameStreamProvider = StreamProvider.family<Game, GameId>((ref, id) {
+final gameStreamProvider = StreamProvider.family<Game, GameId>((
+  ref,
+  id,
+) async* {
   final gameRepo = ref.watch(gameRepositoryProvider);
-  return gameRepo.watchGame(id);
+  await gameRepo.startGame(['p1', 'p2'], 'abcd');
+
+  yield* gameRepo.watchGame(id);
 });

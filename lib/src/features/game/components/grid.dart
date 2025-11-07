@@ -1,6 +1,7 @@
 import 'package:flame/components.dart';
 import 'package:flame/events.dart';
 import 'package:flutter/material.dart';
+import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
 
 class Grid extends PositionComponent with TapCallbacks {
   Grid({required this.sizeInCells, required this.cellSize}) {
@@ -12,6 +13,7 @@ class Grid extends PositionComponent with TapCallbacks {
   final int sizeInCells;
   final double cellSize;
   final List<Vector2> highlightedCells = [];
+  PlayerAction action = PlayerAction.none;
   Vector2? selectedCell;
 
   void highlightCells(List<Vector2> cells) {
@@ -28,16 +30,30 @@ class Grid extends PositionComponent with TapCallbacks {
 
   @override
   bool onTapDown(TapDownEvent event) {
-    final local = event.localPosition;
-    final cell = Vector2(
-      (local.x / cellSize).floorToDouble(),
-      (local.y / cellSize).floorToDouble(),
-    );
+    if (action == PlayerAction.move) {
+      final local = event.localPosition;
+      final cell = Vector2(
+        (local.x / cellSize).floorToDouble(),
+        (local.y / cellSize).floorToDouble(),
+      );
 
-    if (highlightedCells.any((c) => c.x == cell.x && c.y == cell.y)) {
-      selectedCell = cell;
-    } else {
-      selectedCell = null;
+      if (highlightedCells.any((c) => c.x == cell.x && c.y == cell.y)) {
+        selectedCell = cell;
+      } else {
+        selectedCell = null;
+      }
+    } else if (action == PlayerAction.shoot) {
+      final local = event.localPosition;
+      final cell = Vector2(
+        (local.x / cellSize).floorToDouble(),
+        (local.y / cellSize).floorToDouble(),
+      );
+
+      if (highlightedCells.any((c) => c.x == cell.x && c.y == cell.y)) {
+        selectedCell = cell;
+      } else {
+        selectedCell = null;
+      }
     }
     return true;
   }
@@ -53,6 +69,11 @@ class Grid extends PositionComponent with TapCallbacks {
     final selectedPaint = Paint()
       ..color = Colors.white
       ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    final attackPaint = Paint()
+      ..color = Colors.redAccent.withAlpha(100)
+      ..style = PaintingStyle.fill
+      // ..style = PaintingStyle.stroke
       ..strokeWidth = 3;
 
     for (int i = 0; i <= sizeInCells; i++) {
@@ -71,17 +92,65 @@ class Grid extends PositionComponent with TapCallbacks {
     for (final cell in highlightedCells) {
       canvas.drawRect(
         Rect.fromLTWH(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize),
-        highlightPaint,
+        action == PlayerAction.melee ? attackPaint : highlightPaint,
       );
     }
 
     if (selectedCell != null) {
-      final center = Offset(
-        selectedCell!.x * cellSize + cellSize / 2,
-        selectedCell!.y * cellSize + cellSize / 2,
-      );
-      final radius = cellSize / 2 - 4;
-      canvas.drawCircle(center, radius, selectedPaint);
+      if (action == PlayerAction.move) {
+        final center = Offset(
+          selectedCell!.x * cellSize + cellSize / 2,
+          selectedCell!.y * cellSize + cellSize / 2,
+        );
+        final radius = cellSize / 2 - 4;
+        canvas.drawCircle(center, radius, selectedPaint);
+      } else if (action == PlayerAction.shoot) {
+        canvas.drawRect(
+          Rect.fromLTWH(
+            (selectedCell!.x * cellSize),
+            (selectedCell!.y * cellSize),
+            cellSize,
+            cellSize,
+          ),
+          attackPaint,
+        );
+        canvas.drawRect(
+          Rect.fromLTWH(
+            (selectedCell!.x + 1) * cellSize,
+            selectedCell!.y * cellSize,
+            cellSize,
+            cellSize,
+          ),
+          attackPaint,
+        );
+        canvas.drawRect(
+          Rect.fromLTWH(
+            (selectedCell!.x - 1) * cellSize,
+            selectedCell!.y * cellSize,
+            cellSize,
+            cellSize,
+          ),
+          attackPaint,
+        );
+        canvas.drawRect(
+          Rect.fromLTWH(
+            selectedCell!.x * cellSize,
+            (selectedCell!.y + 1) * cellSize,
+            cellSize,
+            cellSize,
+          ),
+          attackPaint,
+        );
+        canvas.drawRect(
+          Rect.fromLTWH(
+            selectedCell!.x * cellSize,
+            (selectedCell!.y - 1) * cellSize,
+            cellSize,
+            cellSize,
+          ),
+          attackPaint,
+        );
+      }
     }
   }
 }

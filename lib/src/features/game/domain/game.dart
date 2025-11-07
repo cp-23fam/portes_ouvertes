@@ -43,7 +43,7 @@ class Game {
   }
 
   factory Game.fromMap(Map<String, dynamic> map) {
-    final players = map['players'] as List<Map<String, dynamic>>;
+    final players = map['players'] as List<dynamic>;
 
     return Game(
       id: map['id'],

@@ -15,7 +15,8 @@ final router = GoRouter(
     GoRoute(
       path: '/',
       name: RouteNames.home.name,
-      builder: (context, state) => const RoomListScreen(), // GameScreen(),
+      builder: (context, state) =>
+          const RoomListScreen(), //GameScreen(gameId: 'abcd'),
       routes: [
         GoRoute(
           path: '/details/:id',
@@ -48,7 +49,7 @@ final router = GoRouter(
         GoRoute(
           path: '/game/:id',
           name: RouteNames.game.name,
-          builder: (context, state) => GameScreen(),
+          builder: (context, state) => GameScreen(gameId: 'abcd'),
         ),
       ],
     ),
