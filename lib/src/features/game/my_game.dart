@@ -103,31 +103,20 @@ class MyGame extends FlameGame {
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
         ref.read(gameRepositoryProvider).playActions(gameId);
       }
+      print(
+        'Chossing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
+      );
     } else if (status == GameStatus.showing) {
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
         ref.read(gameRepositoryProvider).nextRound(gameId);
       }
+      print(
+        'Showing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
+      );
     }
-
-    // ------------- Lecture du Stream ------------- \\
   }
 
   Future<void> executeRoundEnd() async {
-    // ------------- Réccuperation ------------- \\
-
-    // Game repoGame = await GameRepository().fetchGame(gameId);
-    // // players = repoGame.players;
-
-    // for (Player player in players) {
-    //   PlayerModel repoPlayer = repoGame.players.firstWhere(
-    //     (p) => p.uid == player.id,
-    //   );
-
-    //   player.action = repoPlayer.action;
-    //   // player.target = repoPlayer.target;
-    //   player.position = repoPlayer.position;
-    // }
-
     grid.clearHighlights();
     pauseRound();
   }
