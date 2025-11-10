@@ -17,21 +17,30 @@ class GameRepository {
       doc = _collection.doc(id);
     }
 
+    List<List<Vector2>> poses = [
+      [Vector2(4, 1), Vector2(4, 7)],
+      // TODO complete list
+    ];
+
+    List<PlayerModel> gamePlayers = [];
+
+    for (int i = 0; i < players.length; i++) {
+      gamePlayers.add(
+        PlayerModel(
+          uid: players[i],
+          position: poses[0][i],
+          action: PlayerAction.none,
+          life: 3,
+          actionPos: null,
+        ),
+      );
+    }
+
     await doc.set(
       Game(
         id: doc.id,
-        timestamp: DateTime.now().millisecondsSinceEpoch + 20 * 1000,
-        players: players
-            .map(
-              (id) => PlayerModel(
-                uid: id,
-                position: Vector2(0, 0),
-                life: 3,
-                actionPos: null,
-                action: PlayerAction.none,
-              ),
-            )
-            .toList(),
+        timestamp: DateTime.now().millisecondsSinceEpoch + 5 * 1000,
+        players: gamePlayers,
         status: GameStatus.starting,
       ).toMap(),
     );
@@ -55,7 +64,7 @@ class GameRepository {
           .set(
             game
                 .copyWith(
-                  timestamp: game.timestamp + 20 * 1000,
+                  timestamp: game.timestamp + 15 * 1000,
                   status: GameStatus.choosing,
                 )
                 .toMap(),
@@ -76,16 +85,30 @@ class GameRepository {
     final playerIndex = players.indexWhere((p) => p.uid == player.uid);
     players[playerIndex] = player;
 
-    await _collection
-        .doc(id)
-        .set(
-          game
-              .copyWith(
-                timestamp: game.timestamp + milliseconds,
-                players: players,
-              )
-              .toMap(),
-        );
+    if (players.indexWhere((p) => p.action == PlayerAction.none) == -1) {
+      await _collection
+          .doc(id)
+          .set(
+            game
+                .copyWith(
+                  timestamp: DateTime.now().millisecondsSinceEpoch,
+                  players: players,
+                )
+                .toMap(),
+          );
+    } else {
+      await _collection
+          .doc(id)
+          .set(
+            game
+                .copyWith(
+                  timestamp:
+                      DateTime.now().millisecondsSinceEpoch + milliseconds,
+                  players: players,
+                )
+                .toMap(),
+          );
+    }
   }
 
   Future<List<Vector2>> playActions(GameId id) async {
@@ -172,7 +195,7 @@ class GameRepository {
             game
                 .copyWith(
                   status: GameStatus.choosing,
-                  timestamp: DateTime.now().millisecondsSinceEpoch + 5 * 1000,
+                  timestamp: DateTime.now().millisecondsSinceEpoch + 15 * 1000,
                 )
                 .toMap(),
           );
