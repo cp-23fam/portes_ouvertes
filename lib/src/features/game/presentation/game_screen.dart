@@ -68,6 +68,8 @@ class _GameScreenState extends State<GameScreen> {
                         data: (gameClass) {
                           if (gameClass.status == GameStatus.starting) {
                             game.gameMerge(gameClass);
+                          } else if (gameClass.status == GameStatus.showing) {
+                            game.gameUpdatePlayers(gameClass);
                           }
 
                           // Autre fonction en cas de endRound --> Mettre à jour les players

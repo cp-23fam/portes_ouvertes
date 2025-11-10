@@ -43,6 +43,20 @@ class MyGame extends FlameGame {
     }
   }
 
+  void gameUpdatePlayers(Game game) {
+    for (PlayerModel playerModel in game.players) {
+      final player = getPlayerById(playerModel.uid);
+
+      debugPrint(player.position.toString());
+
+      player.position = playerModel.position;
+    }
+  }
+
+  Player getPlayerById(String id) {
+    return players.firstWhere((p) => p.id == id);
+  }
+
   @override
   Color backgroundColor() => const Color(0xFF101010);
 
