@@ -22,24 +22,24 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  final MyGame game = MyGame();
+  MyGame? game;
   String actualAction = '';
 
   void _onActionSelected(PlayerAction action) {
     if (action == PlayerAction.move) {
-      game.highlightMoveZone(widget.playerId);
-      game.players[0].action = PlayerAction.move;
+      game!.players[0].action = PlayerAction.move;
+      game!.highlightMoveZone(widget.playerId);
     } else if (action == PlayerAction.melee) {
-      game.highlightMeleeZone(widget.playerId);
-      game.players[0].action = PlayerAction.melee;
+      game!.highlightMeleeZone(widget.playerId);
+      game!.players[0].action = PlayerAction.melee;
     } else if (action == PlayerAction.shoot) {
-      game.highlightShootZone(widget.playerId);
-      game.players[0].action = PlayerAction.shoot;
+      game!.highlightShootZone(widget.playerId);
+      game!.players[0].action = PlayerAction.shoot;
     } else if (action == PlayerAction.block) {
-      game.highlightBlockZone(widget.playerId);
-      game.players[0].action = PlayerAction.block;
+      game!.highlightBlockZone(widget.playerId);
+      game!.players[0].action = PlayerAction.block;
     } else {
-      game.grid.clearHighlights();
+      game!.grid.clearHighlights();
     }
   }
 
@@ -66,23 +66,27 @@ class _GameScreenState extends State<GameScreen> {
                       );
                       return gameData.when(
                         data: (gameClass) {
-                          if (!game.isInit) {
-                            game.gameMerge(gameClass);
-                            game.isInit = true;
+                          game ??= MyGame(ref: ref);
+
+                          game!.timestamp = gameClass.timestamp;
+
+                          if (!game!.isInit) {
+                            game!.gameId = widget.gameId;
+                            game!.gameMerge(gameClass);
+                            game!.isInit = true;
                           }
                           if (gameClass.status == GameStatus.starting) {
                             ref
                                 .read(gameRepositoryProvider)
                                 .startChoosing(widget.gameId);
                           } else if (gameClass.status == GameStatus.choosing) {
-                            game.gameUpdatePlayers(gameClass);
+                          } else if (gameClass.status == GameStatus.showing) {
+                            game!.gameUpdatePlayers(gameClass);
                           }
 
-                          // Autre fonction en cas de endRound --> Mettre à jour les players
-                          return GameWidget(game: game);
+                          return GameWidget(game: game!);
                         },
                         error: (error, stackTrace) {
-                          // print(stackTrace);
                           return Center(child: Text(error.toString()));
                         },
                         loading: () => const Placeholder(),
@@ -176,8 +180,8 @@ class _GameScreenState extends State<GameScreen> {
                   color: AppColors.goodColor,
                   text: 'Valider',
                   onPressed: () async {
-                    final selected = game.grid.selectedCell;
-                    final playerRef = game.getPlayerById(
+                    final selected = game!.grid.selectedCell;
+                    final playerRef = game!.getPlayerById(
                       widget.playerId,
                     ); // game.players[0];
 

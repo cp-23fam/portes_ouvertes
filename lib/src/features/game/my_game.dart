@@ -1,15 +1,21 @@
 import 'dart:async';
 import 'package:flame/game.dart' hide Game;
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/features/game/components/grid.dart';
 import 'package:portes_ouvertes/src/features/game/components/player.dart';
+import 'package:portes_ouvertes/src/features/game/data/game_repository.dart';
 import 'package:portes_ouvertes/src/features/game/domain/game.dart';
 import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
 
 class MyGame extends FlameGame {
+  MyGame({required this.ref});
+
   late Grid grid;
   late String gameId;
   List<Player> players = [];
+  int timestamp = -1;
+  final WidgetRef ref;
 
   bool isPaused = false;
   bool isInit = false;
@@ -48,24 +54,14 @@ class MyGame extends FlameGame {
     for (PlayerModel playerModel in game.players) {
       final player = getPlayerById(playerModel.uid);
 
+      // player.position = playerModel.position;
+
+      player.moveToCell(playerModel.position);
+
       debugPrint(player.position.toString());
 
-      player.position = playerModel.position;
+      executeRoundEnd();
     }
-  }
-
-  void testUpdatePlayers(PlayerModel playerModel) {
-    final player = getPlayerById(playerModel.uid);
-
-    debugPrint(player.position.toString());
-
-    // player.position = playerModel.position;
-
-    // players[0].position = playerModel.position;
-
-    player.moveToCell(playerModel.position);
-
-    executeRoundEnd();
   }
 
   Player getPlayerById(String id) {
@@ -96,6 +92,10 @@ class MyGame extends FlameGame {
   @override
   void update(double dt) {
     super.update(dt);
+
+    if (timestamp < DateTime.now().millisecondsSinceEpoch) {
+      ref.read(gameRepositoryProvider).playActions(gameId);
+    }
 
     // ------------- Lecture du Stream ------------- \\
   }
