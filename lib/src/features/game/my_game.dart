@@ -12,6 +12,7 @@ class MyGame extends FlameGame {
   List<Player> players = [];
 
   bool isPaused = false;
+  bool isInit = false;
 
   void gameMerge(Game game) {
     for (PlayerModel player in game.players) {
