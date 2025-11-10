@@ -55,7 +55,7 @@ class GameRepository {
           .set(
             game
                 .copyWith(
-                  timestamp: game.timestamp + 5 * 1000,
+                  timestamp: game.timestamp + 20 * 1000,
                   status: GameStatus.choosing,
                 )
                 .toMap(),

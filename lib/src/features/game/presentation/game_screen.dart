@@ -1,3 +1,5 @@
+// import 'dart:async';
+
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
@@ -24,20 +26,51 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   MyGame? game;
   String actualAction = '';
+  // int remainingSeconds = 0;
+  // Timer? countdownTimer;
+
+  // @override
+  // void dispose() {
+  //   countdownTimer?.cancel();
+  //   super.dispose();
+  // }
+
+  // void _startCountdown() {
+  //   countdownTimer?.cancel();
+
+  //   countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
+  //     if (game == null || game!.timestamp <= 0) return;
+
+  //     final now = DateTime.now().millisecondsSinceEpoch;
+  //     final diff = ((game!.timestamp - now) / 1000).ceil();
+
+  //     if (diff <= 0) {
+  //       setState(() {
+  //         remainingSeconds = 0;
+  //       });
+  //       timer.cancel();
+  //     } else {
+  //       setState(() {
+  //         remainingSeconds = diff;
+  //       });
+  //     }
+  //   });
+  // }
 
   void _onActionSelected(PlayerAction action) {
+    // Player player = game!.getPlayerById(widget.playerId);
     if (action == PlayerAction.move) {
-      game!.players[0].action = PlayerAction.move;
+      game!.getPlayerById(widget.playerId).action = PlayerAction.move;
       game!.highlightMoveZone(widget.playerId);
     } else if (action == PlayerAction.melee) {
       game!.highlightMeleeZone(widget.playerId);
-      game!.players[0].action = PlayerAction.melee;
+      game!.getPlayerById(widget.playerId).action = PlayerAction.melee;
     } else if (action == PlayerAction.shoot) {
       game!.highlightShootZone(widget.playerId);
-      game!.players[0].action = PlayerAction.shoot;
+      game!.getPlayerById(widget.playerId).action = PlayerAction.shoot;
     } else if (action == PlayerAction.block) {
       game!.highlightBlockZone(widget.playerId);
-      game!.players[0].action = PlayerAction.block;
+      game!.getPlayerById(widget.playerId).action = PlayerAction.block;
     } else {
       game!.grid.clearHighlights();
     }
@@ -69,6 +102,9 @@ class _GameScreenState extends State<GameScreen> {
                           game ??= MyGame(ref: ref);
 
                           game!.timestamp = gameClass.timestamp;
+                          game!.status = gameClass.status;
+
+                          // _startCountdown();
 
                           if (!game!.isInit) {
                             game!.gameId = widget.gameId;
@@ -97,13 +133,44 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Text(
-              'Action : $actualAction',
-              style: const TextStyle(
-                color: Colors.white,
-                fontSize: 22,
-                fontWeight: FontWeight.bold,
-              ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                // Text(
+                //   'Vie : ${game!.getPlayerById(widget.playerId).lives}',
+                //   style: const TextStyle(
+                //     color: Colors.white,
+                //     fontSize: 22,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+
+                // Timer in Seconds,
+                // Text(
+                //   'Temps : $remainingSeconds s',
+                //   style: const TextStyle(
+                //     color: Colors.white,
+                //     fontSize: 22,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+                // Text(
+                //   'Temps : ${game!.timestamp - DateTime.now().millisecondsSinceEpoch} s',
+                //   style: const TextStyle(
+                //     color: Colors.white,
+                //     fontSize: 22,
+                //     fontWeight: FontWeight.bold,
+                //   ),
+                // ),
+                Text(
+                  'Action : $actualAction',
+                  style: const TextStyle(
+                    color: Colors.white,
+                    fontSize: 22,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ],
             ),
             Stack(
               children: [
