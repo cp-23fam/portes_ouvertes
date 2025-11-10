@@ -16,6 +16,7 @@ class MyGame extends FlameGame {
   List<Player> players = [];
   int timestamp = -1;
   final WidgetRef ref;
+  GameStatus status = GameStatus.starting;
 
   bool isPaused = false;
   bool isInit = false;
@@ -31,6 +32,7 @@ class MyGame extends FlameGame {
             player.uid.hashCode % 123,
             player.uid.hashCode % 176,
           ),
+          lives: player.life,
           position: player.position,
           // position: Vector2(4, 4),
         ),
@@ -54,11 +56,13 @@ class MyGame extends FlameGame {
     for (PlayerModel playerModel in game.players) {
       final player = getPlayerById(playerModel.uid);
 
-      // player.position = playerModel.position;
+      if (player.action == PlayerAction.move) {
+        if (playerModel.actionPos != null) {
+          player.moveToCell(playerModel.actionPos!);
+        }
+      }
 
-      player.moveToCell(playerModel.position);
-      // player.moveToPixel(playerModel.position);
-      // player.moveToCell(playerModel.actionPos!);
+      player.lives = playerModel.life;
 
       debugPrint(player.position.toString());
 
@@ -95,8 +99,14 @@ class MyGame extends FlameGame {
   void update(double dt) {
     super.update(dt);
 
-    if (timestamp < DateTime.now().millisecondsSinceEpoch) {
-      ref.read(gameRepositoryProvider).playActions(gameId);
+    if (status == GameStatus.choosing) {
+      if (timestamp < DateTime.now().millisecondsSinceEpoch) {
+        ref.read(gameRepositoryProvider).playActions(gameId);
+      }
+    } else if (status == GameStatus.showing) {
+      if (timestamp < DateTime.now().millisecondsSinceEpoch) {
+        ref.read(gameRepositoryProvider).nextRound(gameId);
+      }
     }
 
     // ------------- Lecture du Stream ------------- \\

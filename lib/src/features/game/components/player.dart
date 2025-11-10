@@ -6,6 +6,7 @@ class Player extends PositionComponent {
   Player({
     required this.id,
     required this.color,
+    required this.lives,
     required Vector2 position,
     this.target,
     // this.cellSize = 54,
@@ -25,7 +26,7 @@ class Player extends PositionComponent {
 
   final Color color;
   bool isAlive = true;
-  int lives = 3;
+  int lives;
   final double cellSize = 54;
 
   void moveToCell(Vector2 cell) {
