@@ -49,7 +49,8 @@ final router = GoRouter(
         GoRoute(
           path: '/game/:id',
           name: RouteNames.game.name,
-          builder: (context, state) => GameScreen(gameId: 'abcd'),
+          builder: (context, state) =>
+              GameScreen(gameId: state.pathParameters['id']!),
         ),
       ],
     ),

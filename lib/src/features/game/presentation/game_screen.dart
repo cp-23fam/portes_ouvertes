@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -10,8 +11,8 @@ import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class GameScreen extends StatefulWidget {
   GameScreen({required this.gameId, super.key});
-  final playerId = 'p1';
-  // final playerId = FirebaseAuth.instance.currentUser!.uid;
+  // final playerId = 'p1';
+  final playerId = FirebaseAuth.instance.currentUser!.uid;
   // final gameId = GameRepository().startGame(['p1', 'p2']);
   final String gameId;
   // MyGame myGame = ref.watch(gameStreamProvider());
@@ -68,6 +69,8 @@ class _GameScreenState extends State<GameScreen> {
                           if (gameClass.status == GameStatus.starting) {
                             game.gameMerge(gameClass);
                           }
+
+                          // Autre fonction en cas de endRound --> Mettre à jour les players
                           return GameWidget(game: game);
                         },
                         error: (error, stackTrace) {
@@ -159,31 +162,49 @@ class _GameScreenState extends State<GameScreen> {
               ],
             ),
             // const Expanded(child: SizedBox()),
-            ImportantButton(
-              color: AppColors.goodColor,
-              text: 'Valider',
-              onPressed: () {
-                final selected = game.grid.selectedCell;
-                if (selected != null) {
-                  game.players[0].target = selected;
-                }
+            Consumer(
+              builder: (context, ref, child) {
+                return ImportantButton(
+                  color: AppColors.goodColor,
+                  text: 'Valider',
+                  onPressed: () {
+                    final selected = game.grid.selectedCell;
+                    final playerRef = game.players[0];
 
-                // PlayerModel(uid: uid, position: position, action: action)
+                    if (selected != null) {
+                      playerRef.target = selected;
+                    }
 
-                // game.playerValidated(widget.playerId);
+                    PlayerModel player = PlayerModel(
+                      uid: playerRef.id,
+                      position: playerRef.position,
+                      action: playerRef.action,
+                      life: 3,
+                      actionPos: playerRef.target,
+                    );
 
-                // ------ Envoie du Player au Repository ------ \\
+                    ref
+                        .read(gameRepositoryProvider)
+                        .playerSendAction(player.uid, player);
 
-                // ---------------------------------------------
-                // final selected = game.grid.selectedCell;
-                // if (selected != null) {
-                //   final player = game.players.firstWhere(
-                //     (p) => p.id == widget.playerId,
-                //   );
-                //   player.moveToCell(selected);
-                //   game.grid.clearHighlights();
-                // }
-                // ---------------------------------------------
+                    // PlayerModel(uid: uid, position: position, action: action)
+
+                    // game.playerValidated(widget.playerId);
+
+                    // ------ Envoie du Player au Repository ------ \\
+
+                    // ---------------------------------------------
+                    // final selected = game.grid.selectedCell;
+                    // if (selected != null) {
+                    //   final player = game.players.firstWhere(
+                    //     (p) => p.id == widget.playerId,
+                    //   );
+                    //   player.moveToCell(selected);
+                    //   game.grid.clearHighlights();
+                    // }
+                    // ---------------------------------------------
+                  },
+                );
               },
             ),
           ],
