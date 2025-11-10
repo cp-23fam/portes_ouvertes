@@ -20,6 +20,7 @@ class RoomCreationScreen extends StatefulWidget {
 
 class _RoomCreationScreenState extends State<RoomCreationScreen> {
   final _formKey = GlobalKey<FormState>();
+  bool _canCreate = true;
 
   late final TextEditingController nameController;
   late final TextEditingController numberController;
@@ -89,7 +90,7 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                       gapH24,
                       TextFormField(
                         controller: nameController,
-                        maxLength: 30,
+                        maxLength: 25,
                         validator: (value) {
                           if (value == null || value.isEmpty) {
                             return 'Veuillez entrer un nom de salle'.hardcoded;
@@ -154,7 +155,7 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                     color: AppColors.goodColor,
                     text: 'Créer'.hardcoded,
                     onPressed: () async {
-                      if (_formKey.currentState?.validate() ?? false) {
+                      if (_formKey.currentState!.validate() && _canCreate) {
                         String id = await ref
                             .read(roomRepositoryProvider)
                             .createRoom(
@@ -168,6 +169,10 @@ class _RoomCreationScreenState extends State<RoomCreationScreen> {
                             pathParameters: {'id': id},
                           );
                         }
+
+                        setState(() {
+                          _canCreate = false;
+                        });
                       }
                     },
                   );

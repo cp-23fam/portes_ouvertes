@@ -94,7 +94,7 @@ class _UserSettingsScreenState extends ConsumerState<UserSettingsScreen> {
                         children: [
                           TextFormField(
                             controller: usernameComtroller,
-                            maxLength: 25,
+                            maxLength: 20,
                             style: TextStyle(color: AppColors.titleColor),
                             decoration: InputDecoration(
                               labelText: 'Nom d\'utilisateur'.hardcoded,

@@ -158,8 +158,27 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                 if (context.mounted) {
                                   context.goNamed(RouteNames.home.name);
                                 }
-                              } on FirebaseAuthException catch (_) {
-                                //
+                              } on FirebaseAuthException catch (e) {
+                                switch (e.code) {
+                                  case 'invalid-email':
+                                    setState(() {
+                                      emailErrorText =
+                                          'Mail invalide'.hardcoded;
+                                    });
+                                  case 'user-not-found':
+                                    setState(() {
+                                      emailErrorText =
+                                          'Mail non trouvé'.hardcoded;
+                                    });
+                                  case 'wrong-password':
+                                    setState(() {
+                                      passwordErrorText =
+                                          'Mauvais mot de passe'.hardcoded;
+                                    });
+
+                                  default:
+                                    rethrow;
+                                }
                               }
                             },
                           );
@@ -239,15 +258,15 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                     switch (e.code) {
                       case 'invalid-email':
                         setState(() {
-                          emailErrorText = 'Invalid email'.hardcoded;
+                          emailErrorText = 'Mail invalide'.hardcoded;
                         });
                       case 'user-not-found':
                         setState(() {
-                          emailErrorText = 'Email not found'.hardcoded;
+                          emailErrorText = 'Mail non trouvé'.hardcoded;
                         });
                       case 'wrong-password':
                         setState(() {
-                          passwordErrorText = 'Invalid password'.hardcoded;
+                          passwordErrorText = 'Mauvais mot de passe'.hardcoded;
                         });
 
                       default:

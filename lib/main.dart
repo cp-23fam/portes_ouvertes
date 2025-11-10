@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/firebase_options.dart';
 import 'package:portes_ouvertes/src/app.dart';
@@ -10,9 +11,8 @@ import 'package:portes_ouvertes/src/features/user/data/user_repository.dart';
 Future<void> main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  FirebaseAuth.instance.setPersistence(Persistence.LOCAL);
 
-  await FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
   FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
 
   if (const String.fromEnvironment('USER').isNotEmpty) {
@@ -26,10 +26,10 @@ Future<void> main() async {
 
       await UserRepository().createUser(usc.user!.uid, 'User-$user');
     } on FirebaseAuthException {
-      print('user-$user@ceff.ch is already created');
+      debugPrint('user-$user@ceff.ch is already created');
     }
 
-    FirebaseAuth.instance.signInWithEmailAndPassword(
+    await FirebaseAuth.instance.signInWithEmailAndPassword(
       email: 'user-$user@ceff.ch',
       password: 'Pa\$\$w0rd',
     );
