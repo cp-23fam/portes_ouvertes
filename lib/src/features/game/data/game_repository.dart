@@ -45,6 +45,24 @@ class GameRepository {
     return docData.map((d) => Game.fromMap(d.data()!));
   }
 
+  Future<void> startChoosing(GameId id) async {
+    final gameData = await _collection.doc(id).get();
+    final game = Game.fromMap(gameData.data()!);
+
+    if (game.status == GameStatus.starting) {
+      await _collection
+          .doc(id)
+          .set(
+            game
+                .copyWith(
+                  timestamp: game.timestamp + 20 * 1000,
+                  status: GameStatus.choosing,
+                )
+                .toMap(),
+          );
+    }
+  }
+
   Future<void> playerSendAction(
     GameId id,
     PlayerModel player, [
@@ -128,7 +146,7 @@ class GameRepository {
                 .copyWith(
                   status: GameStatus.showing,
                   players: players,
-                  timestamp: DateTime.now().millisecondsSinceEpoch + 10 * 1000,
+                  timestamp: game.timestamp + 10 * 1000,
                 )
                 .toMap(),
           );
