@@ -124,7 +124,31 @@ class GameRepository {
       await _collection
           .doc(id)
           .set(
-            game.copyWith(status: GameStatus.showing, players: players).toMap(),
+            game
+                .copyWith(
+                  status: GameStatus.showing,
+                  players: players,
+                  timestamp: DateTime.now().millisecondsSinceEpoch + 10 * 1000,
+                )
+                .toMap(),
+          );
+    }
+  }
+
+  Future<void> nextRound(GameId id) async {
+    final gameData = await _collection.doc(id).get();
+    final game = Game.fromMap(gameData.data()!);
+
+    if (game.status == GameStatus.showing) {
+      await _collection
+          .doc(id)
+          .set(
+            game
+                .copyWith(
+                  status: GameStatus.choosing,
+                  timestamp: DateTime.now().millisecondsSinceEpoch + 5 * 1000,
+                )
+                .toMap(),
           );
     }
   }
