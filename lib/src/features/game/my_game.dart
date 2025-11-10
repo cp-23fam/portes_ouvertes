@@ -53,6 +53,20 @@ class MyGame extends FlameGame {
     }
   }
 
+  void testUpdatePlayers(PlayerModel playerModel) {
+    final player = getPlayerById(playerModel.uid);
+
+    debugPrint(player.position.toString());
+
+    // player.position = playerModel.position;
+
+    // players[0].position = playerModel.position;
+
+    player.moveToCell(playerModel.position);
+
+    executeRoundEnd();
+  }
+
   Player getPlayerById(String id) {
     return players.firstWhere((p) => p.id == id);
   }

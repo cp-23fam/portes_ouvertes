@@ -169,9 +169,11 @@ class _GameScreenState extends State<GameScreen> {
                 return ImportantButton(
                   color: AppColors.goodColor,
                   text: 'Valider',
-                  onPressed: () {
+                  onPressed: () async {
                     final selected = game.grid.selectedCell;
-                    final playerRef = game.players[0];
+                    final playerRef = game.getPlayerById(
+                      widget.playerId,
+                    ); // game.players[0];
 
                     if (selected != null) {
                       playerRef.target = selected;
@@ -185,9 +187,11 @@ class _GameScreenState extends State<GameScreen> {
                       actionPos: playerRef.target,
                     );
 
-                    ref
+                    await ref
                         .read(gameRepositoryProvider)
-                        .playerSendAction(player.uid, player);
+                        .playerSendAction(widget.gameId, player);
+
+                    game.testUpdatePlayers(player);
 
                     // PlayerModel(uid: uid, position: position, action: action)
 
