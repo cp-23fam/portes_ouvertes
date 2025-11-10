@@ -10,7 +10,7 @@ class GameRepository {
   late final _collection = _db.collection('games');
 
   Future<String> startGame(List<UserId> players, [String id = '']) async {
-    late final doc;
+    late final DocumentReference<Map<String, dynamic>> doc;
     if (id.isEmpty) {
       doc = _collection.doc();
     } else {
@@ -79,38 +79,35 @@ class GameRepository {
         .set(game.copyWith(timestamp: game.timestamp + milliseconds).toMap());
   }
 
-  Future<void> playActions(GameId id) async {
+  Future<List<Vector2>> playActions(GameId id) async {
     final gameData = await _collection.doc(id).get();
     final game = Game.fromMap(gameData.data()!);
 
-    if (game.status == GameStatus.choosing) {
-      List<Vector2> dangerPos = [];
+    List<Vector2> dangerPos = [];
 
-      for (PlayerModel p in game.players) {
-        switch (p.action) {
-          case PlayerAction.melee:
-            final Vector2 basePos = p.position;
+    for (PlayerModel p in game.players) {
+      switch (p.action) {
+        case PlayerAction.melee:
+          final Vector2 basePos = p.position;
 
-            for (int i = 0; i < 9; i++) {
-              dangerPos.add(
-                Vector2(
-                  basePos.x + (i % 3) - 1,
-                  basePos.y + (i / 3).floor() - 1,
-                ),
-              );
-            }
-          case PlayerAction.shoot:
-            final Vector2 basePos = p.actionPos!;
+          for (int i = 0; i < 9; i++) {
+            dangerPos.add(
+              Vector2(basePos.x + (i % 3) - 1, basePos.y + (i / 3).floor() - 1),
+            );
+          }
+        case PlayerAction.shoot:
+          final Vector2 basePos = p.actionPos!;
 
-            for (int i = 0; i < 3; i++) {
-              dangerPos.add(Vector2(basePos.x - 1 + i, basePos.y));
-            }
-            break;
-          default:
-            continue;
-        }
+          for (int i = 0; i < 3; i++) {
+            dangerPos.add(Vector2(basePos.x - 1 + i, basePos.y));
+          }
+          break;
+        default:
+          continue;
       }
+    }
 
+    if (game.status == GameStatus.choosing) {
       final List<PlayerModel> players = [];
 
       for (PlayerModel p in game.players) {
@@ -151,6 +148,8 @@ class GameRepository {
                 .toMap(),
           );
     }
+
+    return dangerPos;
   }
 
   Future<void> nextRound(GameId id) async {
