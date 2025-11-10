@@ -35,6 +35,10 @@ class Player extends PositionComponent {
     );
   }
 
+  void moveToPixel(Vector2 cell) {
+    position = Vector2(cell.x, cell.y);
+  }
+
   @override
   void render(Canvas canvas) {
     final paint = Paint()..color = color;

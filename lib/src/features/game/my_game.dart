@@ -57,6 +57,8 @@ class MyGame extends FlameGame {
       // player.position = playerModel.position;
 
       player.moveToCell(playerModel.position);
+      // player.moveToPixel(playerModel.position);
+      // player.moveToCell(playerModel.actionPos!);
 
       debugPrint(player.position.toString());
 
