@@ -4,7 +4,36 @@
             "name": "Portes Ouvertes",
             "type": "dart",
             "request": "launch",
-            "program": "lib\\main.dart"
+            "program": "lib\\main.dart",
+        },
+        {
+            "name": "User1",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\main.dart",
+            "args": [
+                "--web-port",
+                "56798"
+            ]
+        },
+        {
+            "name": "User2",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\main.dart",
+            "args": [
+                "--web-port",
+                "56799"
+            ]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Multiple users",
+            "configurations": [
+                "User1",
+                "User2"
+            ]
         }
     ]
 }
