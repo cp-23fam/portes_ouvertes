@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
@@ -47,22 +48,13 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                   children: [
                     Padding(
                       padding: const EdgeInsets.all(Sizes.p16),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          Text(
-                            room.name,
-                            style: const TextStyle(
-                              fontSize: 36.0,
-                              fontWeight: FontWeight.w800,
-                            ),
-                          ),
-                          // TopActionButton(
-                          //   icon: Icons.arrow_back,
-                          //   onPressed: () =>
-                          //       context.goNamed(RouteNames.home.name),
-                          // ),
-                        ],
+                      child: AutoSizeText(
+                        room.name,
+                        style: const TextStyle(
+                          fontSize: 36.0,
+                          fontWeight: FontWeight.w800,
+                        ),
+                        maxLines: 1,
                       ),
                     ),
                     Text(

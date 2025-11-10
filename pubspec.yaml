@@ -43,6 +43,7 @@ dependencies:
   email_validator: ^3.0.0
   http: ^1.5.0
   flame: ^1.33.0
+  auto_size_text: ^3.0.0
 
 dev_dependencies:
   flutter_test:

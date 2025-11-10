@@ -12,6 +12,8 @@
             "request": "launch",
             "program": "lib\\main.dart",
             "args": [
+                "--dart-define",
+                "USER=1",
                 "--web-port",
                 "56798"
             ]
@@ -22,6 +24,8 @@
             "request": "launch",
             "program": "lib\\main.dart",
             "args": [
+                "--dart-define",
+                "USER=2",
                 "--web-port",
                 "56799"
             ]

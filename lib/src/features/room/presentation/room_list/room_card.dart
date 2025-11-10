@@ -1,3 +1,4 @@
+import 'package:auto_size_text/auto_size_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
@@ -45,7 +46,7 @@ class _RoomCardState extends State<RoomCard> {
                 Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(widget.room.name),
+                    AutoSizeText(widget.room.name),
                     Consumer(
                       builder: (context, ref, child) {
                         final hostFuture = ref.read(

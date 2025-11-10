@@ -71,12 +71,21 @@ class GameRepository {
     final gameData = await _collection.doc(id).get();
     final game = Game.fromMap(gameData.data()!);
 
-    final playerIndex = game.players.indexWhere((p) => p.uid == player.uid);
-    game.players[playerIndex] = player;
+    final players = game.players;
+
+    final playerIndex = players.indexWhere((p) => p.uid == player.uid);
+    players[playerIndex] = player;
 
     await _collection
         .doc(id)
-        .set(game.copyWith(timestamp: game.timestamp + milliseconds).toMap());
+        .set(
+          game
+              .copyWith(
+                timestamp: game.timestamp + milliseconds,
+                players: players,
+              )
+              .toMap(),
+        );
   }
 
   Future<List<Vector2>> playActions(GameId id) async {
