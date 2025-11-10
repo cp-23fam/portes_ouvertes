@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
-import 'package:portes_ouvertes/src/localization/string_hardcoded.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class NoUserCard extends StatelessWidget {
@@ -25,15 +24,6 @@ class NoUserCard extends StatelessWidget {
                 Icons.person_outline,
                 color: AppColors.iconColor,
                 size: 45.0,
-              ),
-            ),
-            gapW16,
-            Text(
-              '...'.hardcoded,
-              style: TextStyle(
-                color: AppColors.textColor,
-                fontSize: Sizes.p24,
-                fontWeight: FontWeight.bold,
               ),
             ),
           ],

@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
@@ -34,7 +35,12 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
             return roomStream.when(
               data: (room) {
                 if (room.gameId != null) {
-                  context.goNamed(RouteNames.game.name);
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    context.goNamed(
+                      RouteNames.game.name,
+                      pathParameters: {'id': room.gameId!},
+                    );
+                  });
                 }
 
                 return Column(
@@ -195,7 +201,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                       ),
                       separatorBuilder: (context, index) =>
                           const SizedBox(height: 4.0),
-                      itemCount: 8,
+                      itemCount: 1,
                     ),
               ),
             );

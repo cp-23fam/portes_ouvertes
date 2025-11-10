@@ -95,6 +95,8 @@ List<Room> filterRooms(String query, List<Room> rooms) {
     return rooms;
   }
 
+  rooms.sort((a, b) => a.name.compareTo(b.name));
+
   return rooms
       .where((r) => r.name.toLowerCase().contains(query.toLowerCase()))
       .toList();
