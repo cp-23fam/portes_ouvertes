@@ -120,30 +120,30 @@ class GameRepository {
     final playerIndex = players.indexWhere((p) => p.uid == player.uid);
     players[playerIndex] = player;
 
-    if (players.indexWhere((p) => p.action == PlayerAction.none) == -1) {
-      await _collection
-          .doc(id)
-          .set(
-            game
-                .copyWith(
-                  timestamp: DateTime.now().millisecondsSinceEpoch,
-                  players: players,
-                )
-                .toMap(),
-          );
-    } else {
-      await _collection
-          .doc(id)
-          .set(
-            game
-                .copyWith(
-                  timestamp:
-                      DateTime.now().millisecondsSinceEpoch + milliseconds,
-                  players: players,
-                )
-                .toMap(),
-          );
-    }
+    // if (players.indexWhere((p) => p.action == PlayerAction.none) == -1) {
+    //   await _collection
+    //       .doc(id)
+    //       .set(
+    //         game
+    //             .copyWith(
+    //               timestamp: DateTime.now().millisecondsSinceEpoch,
+    //               players: players,
+    //             )
+    //             .toMap(),
+    //       );
+    // } else {
+    // }
+
+    await _collection
+        .doc(id)
+        .set(
+          game
+              .copyWith(
+                timestamp: DateTime.now().millisecondsSinceEpoch + milliseconds,
+                players: players,
+              )
+              .toMap(),
+        );
   }
 
   Future<List<Vector2>> playActions(GameId id) async {

@@ -81,27 +81,28 @@ class MyGame extends FlameGame {
   Future<void> onLoad() async {
     await super.onLoad();
 
-    startRound();
+    // startRound();
   }
 
-  void startRound() {
-    isPaused = false;
-  }
+  // void startRound() {
+  //   isPaused = false;
+  // }
 
-  void pauseRound() {
-    isPaused = true;
-    Future.delayed(const Duration(seconds: 5), () {
-      startRound();
-    });
-  }
+  // void pauseRound() {
+  //   isPaused = true;
+  //   Future.delayed(const Duration(seconds: 5), () {
+  //     startRound();
+  //   });
+  // }
 
   @override
-  void update(double dt) {
+  Future<void> update(double dt) async {
     super.update(dt);
 
     if (status == GameStatus.choosing) {
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
-        ref.read(gameRepositoryProvider).playActions(gameId);
+        await ref.read(gameRepositoryProvider).playActions(gameId);
+        // gameUpdatePlayers()
       }
       print(
         'Chossing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
@@ -118,7 +119,7 @@ class MyGame extends FlameGame {
 
   Future<void> executeRoundEnd() async {
     grid.clearHighlights();
-    pauseRound();
+    // pauseRound();
   }
 
   // Highlight the Grid
