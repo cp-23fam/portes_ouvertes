@@ -19,7 +19,42 @@ class GameRepository {
 
     List<List<Vector2>> poses = [
       [Vector2(4, 1), Vector2(4, 7)],
-      // TODO complete list
+      [Vector2(4, 2), Vector2(1, 7), Vector2(7, 7)],
+      [Vector2(4, 1), Vector2(4, 7), Vector2(1, 4), Vector2(7, 4)],
+      [
+        Vector2(1, 1),
+        Vector2(1, 7),
+        Vector2(4, 4),
+        Vector2(7, 1),
+        Vector2(7, 7),
+      ],
+      [
+        Vector2(1, 1),
+        Vector2(1, 7),
+        Vector2(1, 4),
+        Vector2(7, 1),
+        Vector2(7, 4),
+        Vector2(7, 7),
+      ],
+      [
+        Vector2(1, 1),
+        Vector2(1, 7),
+        Vector2(1, 4),
+        Vector2(4, 4),
+        Vector2(7, 1),
+        Vector2(7, 4),
+        Vector2(7, 7),
+      ],
+      [
+        Vector2(1, 1),
+        Vector2(1, 4),
+        Vector2(1, 7),
+        Vector2(4, 1),
+        Vector2(4, 7),
+        Vector2(7, 1),
+        Vector2(7, 4),
+        Vector2(7, 7),
+      ],
     ];
 
     List<PlayerModel> gamePlayers = [];
@@ -28,7 +63,7 @@ class GameRepository {
       gamePlayers.add(
         PlayerModel(
           uid: players[i],
-          position: poses[0][i],
+          position: poses[players.length - 2][i],
           action: PlayerAction.none,
           life: 3,
           actionPos: null,
