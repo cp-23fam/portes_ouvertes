@@ -39,7 +39,7 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                   SchedulerBinding.instance.addPostFrameCallback((_) {
                     context.goNamed(
                       RouteNames.game.name,
-                      pathParameters: {'id': room.gameId!},
+                      pathParameters: {'id': room.gameId!, 'room': room.id},
                     );
                   });
                 }
@@ -86,38 +86,16 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                                 if (context.mounted) {
                                   context.goNamed(
                                     RouteNames.game.name,
-                                    pathParameters: {'id': gameId},
+                                    pathParameters: {
+                                      'id': gameId,
+                                      'room': room.id,
+                                    },
                                   );
                                 }
                               }
                             : null,
                       ),
                     gapH8,
-                    // Container(
-                    //   width: double.infinity,
-                    //   margin: const EdgeInsets.all(Sizes.p8),
-                    //   decoration: BoxDecoration(
-                    //     borderRadius: const BorderRadius.all(
-                    //       Radius.circular(Sizes.p20),
-                    //     ),
-                    //     color: AppColors.thirdColor,
-                    //     border: Border.all(
-                    //       width: 2.0,
-                    //       color: AppColors.iconColor,
-                    //     ),
-                    //   ),
-                    //   child: Padding(
-                    //     padding: const EdgeInsets.all(Sizes.p24),
-                    //     child: Text(
-                    //       room.name,
-                    //       style: TextStyle(
-                    //         color: AppColors.textColor,
-                    //         fontSize: Sizes.p32,
-                    //         fontWeight: FontWeight.bold,
-                    //       ),
-                    //     ),
-                    //   ),
-                    // ),
                     Expanded(
                       child: ListView.separated(
                         itemBuilder: (context, index) =>
@@ -166,8 +144,6 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                 );
               },
               error: (error, stackTrace) {
-                // context.goNamed(RouteNames.home.name);
-
                 return Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
@@ -184,17 +160,15 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                 );
               },
               loading: () => Expanded(
-                child:
-                    // Center(child: CircularProgressIndicator()),
-                    ListView.separated(
-                      itemBuilder: (context, index) => const Padding(
-                        padding: EdgeInsets.all(Sizes.p8),
-                        child: NoUserCard(),
-                      ),
-                      separatorBuilder: (context, index) =>
-                          const SizedBox(height: 4.0),
-                      itemCount: 1,
-                    ),
+                child: ListView.separated(
+                  itemBuilder: (context, index) => const Padding(
+                    padding: EdgeInsets.all(Sizes.p8),
+                    child: NoUserCard(),
+                  ),
+                  separatorBuilder: (context, index) =>
+                      const SizedBox(height: 4.0),
+                  itemCount: 1,
+                ),
               ),
             );
           },

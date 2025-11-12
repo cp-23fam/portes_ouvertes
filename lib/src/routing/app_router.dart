@@ -16,7 +16,7 @@ final router = GoRouter(
       path: '/',
       name: RouteNames.home.name,
       builder: (context, state) =>
-          RoomListScreen(), //GameScreen(gameId: 'abcd'),
+          const RoomListScreen(), //GameScreen(gameId: 'abcd'),
       routes: [
         GoRoute(
           path: '/details/:id',
@@ -27,30 +27,27 @@ final router = GoRouter(
         GoRoute(
           path: '/create',
           name: RouteNames.creation.name,
-          builder: (context, state) => RoomCreationScreen(),
+          builder: (context, state) => const RoomCreationScreen(),
         ),
-        // GoRoute(
-        //   path: '/login',
-        //   name: RouteNames.login.name,
-        //   builder: (context, state) => const UserLoginScreen(),
-        // ),
         GoRoute(
           path: '/signup',
           name: RouteNames.signup.name,
-          builder: (context, state) => UserCreationScreen(),
+          builder: (context, state) => const UserCreationScreen(),
         ),
         GoRoute(
           path: '/user',
           name: RouteNames.user.name,
           builder: (context, state) => FirebaseAuth.instance.currentUser == null
-              ? UserLoginScreen()
-              : UserSettingsScreen(),
+              ? const UserLoginScreen()
+              : const UserSettingsScreen(),
         ),
         GoRoute(
-          path: '/game/:id',
+          path: '/game/:room/:id',
           name: RouteNames.game.name,
-          builder: (context, state) =>
-              GameScreen(gameId: state.pathParameters['id']!),
+          builder: (context, state) => GameScreen(
+            gameId: state.pathParameters['id']!,
+            roomId: state.pathParameters['room']!,
+          ),
         ),
       ],
     ),

@@ -1,5 +1,3 @@
-// import 'dart:async';
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/game.dart';
 import 'package:flame/palette.dart';
@@ -13,16 +11,16 @@ import 'package:portes_ouvertes/src/features/game/data/game_repository.dart';
 import 'package:portes_ouvertes/src/features/game/domain/game.dart';
 import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
 import 'package:portes_ouvertes/src/features/game/my_game.dart';
+import 'package:portes_ouvertes/src/features/room/data/room_repository.dart';
 import 'package:portes_ouvertes/src/routing/app_router.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class GameScreen extends StatefulWidget {
-  GameScreen({required this.gameId, super.key});
-  // final playerId = 'p1';
+  GameScreen({required this.roomId, required this.gameId, super.key});
+
   final playerId = FirebaseAuth.instance.currentUser!.uid;
-  // final gameId = GameRepository().startGame(['p1', 'p2']);
+  final String roomId;
   final String gameId;
-  // MyGame myGame = ref.watch(gameStreamProvider());
 
   @override
   State<GameScreen> createState() => _GameScreenState();
@@ -31,43 +29,12 @@ class GameScreen extends StatefulWidget {
 class _GameScreenState extends State<GameScreen> {
   MyGame? game;
   String actualAction = '';
-  // int remainingSeconds = 0;
-  // Timer? countdownTimer;
-
-  // @override
-  // void dispose() {
-  //   countdownTimer?.cancel();
-  //   super.dispose();
-  // }
-
-  // void _startCountdown() {
-  //   countdownTimer?.cancel();
-
-  //   countdownTimer = Timer.periodic(const Duration(seconds: 1), (timer) {
-  //     if (game == null || game!.timestamp <= 0) return;
-
-  //     final now = DateTime.now().millisecondsSinceEpoch;
-  //     final diff = ((game!.timestamp - now) / 1000).ceil();
-
-  //     if (diff <= 0) {
-  //       setState(() {
-  //         remainingSeconds = 0;
-  //       });
-  //       timer.cancel();
-  //     } else {
-  //       setState(() {
-  //         remainingSeconds = diff;
-  //       });
-  //     }
-  //   });
-  // }
 
   void _onActionSelected(PlayerAction action) {
     if (game!.status != GameStatus.choosing) {
       return;
     }
 
-    // Player player = game!.getPlayerById(widget.playerId);
     if (action == PlayerAction.move) {
       game!.getPlayerById(widget.playerId).action = PlayerAction.move;
       game!.highlightMoveZone(widget.playerId);
@@ -114,9 +81,6 @@ class _GameScreenState extends State<GameScreen> {
                   width: 54 * 9,
                   child: Consumer(
                     builder: (context, ref, child) {
-                      // final gameId = GameRepository().startGame(['p1', 'p2']);
-                      // Game myGame = ref.watch(gameStreamProvider('oiafoa'));
-
                       final gameData = ref.watch(
                         gameStreamProvider(widget.gameId),
                       );
@@ -126,8 +90,6 @@ class _GameScreenState extends State<GameScreen> {
 
                           game!.timestamp = gameClass.timestamp;
                           game!.status = gameClass.status;
-
-                          // _startCountdown();
 
                           if (!game!.isInit) {
                             game!.gameId = widget.gameId;
@@ -146,6 +108,10 @@ class _GameScreenState extends State<GameScreen> {
                           }
 
                           if (gameClass.status == GameStatus.ended) {
+                            ref
+                                .read(roomRepositoryProvider)
+                                .deleteRoom(widget.roomId);
+
                             SchedulerBinding.instance.addPostFrameCallback((_) {
                               context.goNamed(RouteNames.home.name);
                             });
@@ -191,7 +157,6 @@ class _GameScreenState extends State<GameScreen> {
                 Align(
                   alignment: Alignment.bottomCenter,
                   child: Padding(
-                    // padding: const EdgeInsets.only(bottom: 40.0),
                     padding: const EdgeInsets.all(40.0),
                     child: SizedBox(
                       width: 200,
@@ -207,9 +172,6 @@ class _GameScreenState extends State<GameScreen> {
                               label: 'Move',
                               onPressed: () {
                                 _onActionSelected(PlayerAction.move);
-                                // setState(() {
-                                //   actualAction = 'Move';
-                                // });
                               },
                             ),
                           ),
@@ -253,7 +215,6 @@ class _GameScreenState extends State<GameScreen> {
                 ),
               ],
             ),
-            // const Expanded(child: SizedBox()),
             Consumer(
               builder: (context, ref, child) {
                 return ImportantButton(
@@ -261,9 +222,7 @@ class _GameScreenState extends State<GameScreen> {
                   text: 'Valider',
                   onPressed: () async {
                     final selected = game!.grid.selectedCell;
-                    final playerRef = game!.getPlayerById(
-                      widget.playerId,
-                    ); // game.players[0];
+                    final playerRef = game!.getPlayerById(widget.playerId);
 
                     if (selected != null) {
                       playerRef.target = selected;
@@ -280,25 +239,6 @@ class _GameScreenState extends State<GameScreen> {
                     await ref
                         .read(gameRepositoryProvider)
                         .playerSendAction(widget.gameId, player);
-
-                    // game.testUpdatePlayers(player);
-
-                    // PlayerModel(uid: uid, position: position, action: action)
-
-                    // game.playerValidated(widget.playerId);
-
-                    // ------ Envoie du Player au Repository ------ \\
-
-                    // ---------------------------------------------
-                    // final selected = game.grid.selectedCell;
-                    // if (selected != null) {
-                    //   final player = game.players.firstWhere(
-                    //     (p) => p.id == widget.playerId,
-                    //   );
-                    //   player.moveToCell(selected);
-                    //   game.grid.clearHighlights();
-                    // }
-                    // ---------------------------------------------
                   },
                 );
               },

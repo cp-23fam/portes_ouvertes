@@ -41,15 +41,9 @@ class MyGame extends FlameGame {
           ),
           lives: player.life,
           position: player.position,
-          // position: Vector2(4, 4),
         ),
       );
     }
-
-    // players.addAll([
-    //   Player(id: 'p1', color: const Color(0xFF00FF00), position: Vector2(1, 1)),
-    //   Player(id: 'p2', color: const Color(0xFFFF0000), position: Vector2(7, 7)),
-    // ]);
 
     for (final player in players) {
       add(player);
@@ -72,17 +66,12 @@ class MyGame extends FlameGame {
 
       if (playerModel.action == PlayerAction.move) {
         player.moveToCell(playerModel.actionPos!);
-        // if (playerModel.actionPos != null) {
-        //   player.moveToCell(playerModel.actionPos!);
-        // }
       }
 
       player.lives = playerModel.life;
     }
 
     grid.clearHighlights();
-
-    // executeRoundEnd();
   }
 
   void removeDeadPlayers() {
@@ -100,24 +89,6 @@ class MyGame extends FlameGame {
   Color backgroundColor() => const Color(0xFF101010);
 
   @override
-  Future<void> onLoad() async {
-    await super.onLoad();
-
-    // startRound();
-  }
-
-  // void startRound() {
-  //   isPaused = false;
-  // }
-
-  // void pauseRound() {
-  //   isPaused = true;
-  //   Future.delayed(const Duration(seconds: 5), () {
-  //     startRound();
-  //   });
-  // }
-
-  @override
   Future<void> update(double dt) async {
     super.update(dt);
 
@@ -133,7 +104,6 @@ class MyGame extends FlameGame {
             .read(gameRepositoryProvider)
             .playActions(gameId);
         grid.highlightCells(dangerCells);
-        // gameUpdatePlayers();
       }
     }
 
@@ -145,16 +115,7 @@ class MyGame extends FlameGame {
         grid.clearHighlights();
         removeDeadPlayers();
       }
-
-      // print(
-      //   'Showing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
-      // );
     }
-  }
-
-  Future<void> executeRoundEnd() async {
-    grid.clearHighlights();
-    // pauseRound();
   }
 
   // Highlight the Grid

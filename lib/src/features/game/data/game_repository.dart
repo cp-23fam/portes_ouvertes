@@ -129,20 +129,6 @@ class GameRepository {
 
     players[playerIndex] = player;
 
-    // if (players.indexWhere((p) => p.action == PlayerAction.none) == -1) {
-    //   await _collection
-    //       .doc(id)
-    //       .set(
-    //         game
-    //             .copyWith(
-    //               timestamp: DateTime.now().millisecondsSinceEpoch,
-    //               players: players,
-    //             )
-    //             .toMap(),
-    //       );
-    // } else {
-    // }
-
     await _collection
         .doc(id)
         .set(
@@ -200,13 +186,6 @@ class GameRepository {
         cellPos.floor();
 
         if (p.action == PlayerAction.move) {
-          // try {
-          //   dangerPos.firstWhere(
-          //     (pos) => pos.x == p.actionPos!.x && pos.y == p.actionPos!.y,
-          //   );
-
-          //   players.add(p.copyWith(life: p.life - 1));
-          // } catch (e) {
           if (dangerPos.contains(p.actionPos!)) {
             players.add(
               p.copyWith(
@@ -221,21 +200,12 @@ class GameRepository {
               ),
             );
           }
-          // }
         } else {
           if (dangerPos.contains(cellPos)) {
             players.add(p.copyWith(life: p.life - 1));
           } else {
             players.add(p);
           }
-          // try {
-          //   dangerPos.firstWhere(
-          //     (pos) => pos.x == cellPos.x && pos.y == cellPos.y,
-          //   );
-
-          //   players.add(p.copyWith(life: p.life - 1));
-          // } catch (e) {
-          // }
         }
       }
 
