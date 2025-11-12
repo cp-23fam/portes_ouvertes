@@ -250,7 +250,7 @@ class _GameScreenState extends State<GameScreen> {
                 );
               },
               error: (error, stackTrace) => Text(error.toString()),
-              loading: () => const Placeholder(),
+              loading: () => const Center(child: CircularProgressIndicator()),
             );
           },
         ),

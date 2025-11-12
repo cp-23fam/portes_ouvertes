@@ -25,6 +25,17 @@ class MyGame extends FlameGame {
 
   late TextComponent text;
 
+  static const playerColors = [
+    0xffff4538,
+    0xffffda38,
+    0xff8fff38,
+    0xff38ff77,
+    0xff38f2ff,
+    0xff385dff,
+    0xffa838ff,
+    0xffff38c0,
+  ];
+
   void gameMerge(Game game) {
     grid = Grid(sizeInCells: 9, cellSize: 54);
     add(grid);
@@ -33,12 +44,7 @@ class MyGame extends FlameGame {
       players.add(
         Player(
           id: player.uid,
-          color: Color.fromARGB(
-            255,
-            player.uid.hashCode % 255,
-            player.uid.hashCode % 123,
-            player.uid.hashCode % 176,
-          ),
+          color: Color(playerColors[game.players.indexOf(player)]),
           lives: player.life,
           position: player.position,
         ),

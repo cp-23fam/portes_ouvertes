@@ -25,14 +25,65 @@
                 "--dart-define",
                 "USER=2",
             ]
+        },
+        {
+            "name": "User3",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\main.dart",
+            "args": [
+                "--dart-define",
+                "USER=3",
+            ]
+        },
+        {
+            "name": "User4",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\main.dart",
+            "args": [
+                "--dart-define",
+                "USER=4",
+            ]
+        },
+        {
+            "name": "User5",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\main.dart",
+            "args": [
+                "--dart-define",
+                "USER=5",
+            ]
+        },
+        {
+            "name": "User6",
+            "type": "dart",
+            "request": "launch",
+            "program": "lib\\main.dart",
+            "args": [
+                "--dart-define",
+                "USER=6",
+            ]
         }
     ],
     "compounds": [
         {
-            "name": "Multiple users",
+            "name": "2 Users",
             "configurations": [
                 "User1",
                 "User2"
+            ]
+        },
+        {
+            "name": "6 Users",
+            "configurations": [
+                "User1",
+                "User2",
+                "User3",
+                "User4",
+                "User5",
+                "User6",
             ]
         }
     ]

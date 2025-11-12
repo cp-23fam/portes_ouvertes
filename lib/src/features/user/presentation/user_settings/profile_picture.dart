@@ -15,17 +15,10 @@ class _ProfilePictureState extends State<ProfilePicture> {
     final String imageUrl = FirebaseAuth.instance.currentUser!.photoURL ?? '';
 
     return CircleAvatar(
-      backgroundImage:
-          FirebaseAuth.instance.currentUser!.providerData[0].providerId ==
-              'password'
-          ? null
-          : NetworkImage(imageUrl),
+      backgroundImage: imageUrl.isEmpty ? null : NetworkImage(imageUrl),
       backgroundColor: AppColors.secondColor,
       radius: 80.0,
-      child:
-          imageUrl.isEmpty ||
-              FirebaseAuth.instance.currentUser!.providerData[0].providerId ==
-                  'password'
+      child: imageUrl.isEmpty
           ? Icon(Icons.person_outline, color: AppColors.iconColor, size: 95.0)
           : null,
     );

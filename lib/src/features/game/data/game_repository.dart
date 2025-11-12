@@ -187,7 +187,7 @@ class GameRepository {
         final Vector2 cellPos = p.position / _cellSize;
         cellPos.floor();
 
-        if (p.action == PlayerAction.move) {
+        if (p.action == PlayerAction.move && p.actionPos != null) {
           if (dangerPos.contains(p.actionPos!)) {
             players.add(
               p.copyWith(

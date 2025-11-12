@@ -26,7 +26,7 @@ Future<void> main() async {
 
       await UserRepository().createUser(usc.user!.uid, 'User-$user');
     } on FirebaseAuthException {
-      debugPrint('user-$user@ceff.ch is already created');
+      //
     }
 
     await FirebaseAuth.instance.signInWithEmailAndPassword(

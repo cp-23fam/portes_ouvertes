@@ -153,6 +153,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                           userCredential.user!.email!.split(
                                             '@',
                                           )[0],
+                                      imageUrl: userCredential.user!.photoURL,
                                     );
 
                                 if (context.mounted) {
@@ -214,6 +215,7 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                         userCredential.user!.email!.split(
                                           '@',
                                         )[0],
+                                    imageUrl: userCredential.user!.photoURL,
                                   );
 
                               if (context.mounted) {

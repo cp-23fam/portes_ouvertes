@@ -32,13 +32,18 @@ class UserCard extends StatelessWidget {
               child: Row(
                 children: [
                   CircleAvatar(
+                    backgroundImage: user.imageUrl == null
+                        ? null
+                        : NetworkImage(user.imageUrl!),
                     backgroundColor: AppColors.secondColor,
                     radius: 30.0,
-                    child: Icon(
-                      Icons.person_outline,
-                      color: AppColors.iconColor,
-                      size: 45.0,
-                    ),
+                    child: user.imageUrl == null
+                        ? Icon(
+                            Icons.person_outline,
+                            color: AppColors.iconColor,
+                            size: 45.0,
+                          )
+                        : null,
                   ),
                   gapW16,
                   Text(
