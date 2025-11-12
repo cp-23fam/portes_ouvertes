@@ -76,6 +76,9 @@ class _RoomListScreenState extends State<RoomListScreen> {
                 return roomsStream.when(
                   data: (values) {
                     final List<Room> rooms = filterRooms(_searchQuery, values);
+                    rooms.sort(
+                      (a, b) => a.status.index.compareTo(b.status.index),
+                    );
 
                     return Expanded(
                       child: ListView.builder(

@@ -2,11 +2,13 @@
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/game.dart';
+import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
+import 'package:portes_ouvertes/src/constants/app_sizes.dart';
 import 'package:portes_ouvertes/src/features/game/data/game_repository.dart';
 import 'package:portes_ouvertes/src/features/game/domain/game.dart';
 import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
@@ -83,6 +85,20 @@ class _GameScreenState extends State<GameScreen> {
     }
   }
 
+  Widget lifeWidget(int life) {
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      spacing: Sizes.p4,
+      children: [
+        if (life == 0)
+          const Icon(Icons.heart_broken)
+        else
+          for (int i = 0; i < life; i++)
+            Icon(Icons.favorite, color: BasicPalette.red.color),
+      ],
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -148,44 +164,26 @@ class _GameScreenState extends State<GameScreen> {
               ),
             ),
             const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                // Text(
-                //   'Vie : ${game!.getPlayerById(widget.playerId).lives}',
-                //   style: const TextStyle(
-                //     color: Colors.white,
-                //     fontSize: 22,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
+            Consumer(
+              builder: (context, ref, child) {
+                final gameStatus = ref.watch(gameStreamProvider(widget.gameId));
 
-                // Timer in Seconds,
-                // Text(
-                //   'Temps : $remainingSeconds s',
-                //   style: const TextStyle(
-                //     color: Colors.white,
-                //     fontSize: 22,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-                // Text(
-                //   'Temps : ${game!.timestamp - DateTime.now().millisecondsSinceEpoch} s',
-                //   style: const TextStyle(
-                //     color: Colors.white,
-                //     fontSize: 22,
-                //     fontWeight: FontWeight.bold,
-                //   ),
-                // ),
-                Text(
-                  'Action : $actualAction',
-                  style: const TextStyle(
-                    color: Colors.white,
-                    fontSize: 22,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-              ],
+                return gameStatus.when(
+                  data: (game) {
+                    try {
+                      final player = game.players.firstWhere(
+                        (p) => p.uid == FirebaseAuth.instance.currentUser!.uid,
+                      );
+
+                      return lifeWidget(player.life);
+                    } catch (e) {
+                      return lifeWidget(0);
+                    }
+                  },
+                  loading: () => lifeWidget(3),
+                  error: (error, stackTrace) => lifeWidget(3),
+                );
+              },
             ),
             Stack(
               children: [

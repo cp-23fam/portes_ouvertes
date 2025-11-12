@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'package:flame/components.dart';
 import 'package:flame/game.dart' hide Game;
+import 'package:flame/palette.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:portes_ouvertes/src/features/game/components/grid.dart';
@@ -21,7 +23,12 @@ class MyGame extends FlameGame {
   bool isPaused = false;
   bool isInit = false;
 
+  late TextComponent text;
+
   void gameMerge(Game game) {
+    grid = Grid(sizeInCells: 9, cellSize: 54);
+    add(grid);
+
     for (PlayerModel player in game.players) {
       players.add(
         Player(
@@ -44,12 +51,19 @@ class MyGame extends FlameGame {
     //   Player(id: 'p2', color: const Color(0xFFFF0000), position: Vector2(7, 7)),
     // ]);
 
-    grid = Grid(sizeInCells: 9, cellSize: 54);
-    add(grid);
-
     for (final player in players) {
       add(player);
     }
+
+    text = TextComponent(
+      text: '',
+      position: Vector2(5, 3),
+      textRenderer: TextPaint(
+        style: TextStyle(color: BasicPalette.white.color, fontSize: 18.0),
+      ),
+    );
+
+    add(text);
   }
 
   void gameUpdatePlayers(Game game) {
@@ -64,8 +78,6 @@ class MyGame extends FlameGame {
       }
 
       player.lives = playerModel.life;
-
-      debugPrint(player.position.toString());
     }
 
     grid.clearHighlights();
@@ -111,10 +123,11 @@ class MyGame extends FlameGame {
 
     if (status == GameStatus.choosing && players.length == 1) {
       print('Win scene');
-      return;
     }
 
     if (status == GameStatus.choosing) {
+      text.text =
+          'Temps restant : ${((timestamp - DateTime.now().millisecondsSinceEpoch) / 1000).ceil()}s';
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
         final List<Vector2> dangerCells = await ref
             .read(gameRepositoryProvider)
@@ -122,13 +135,11 @@ class MyGame extends FlameGame {
         grid.highlightCells(dangerCells);
         // gameUpdatePlayers();
       }
-
-      print(
-        'Choosing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
-      );
     }
 
     if (status == GameStatus.showing) {
+      text.text =
+          'Prochain round : ${((timestamp - DateTime.now().millisecondsSinceEpoch) / 1000).ceil()}s';
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
         await ref.read(gameRepositoryProvider).nextRound(gameId);
         grid.clearHighlights();

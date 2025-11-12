@@ -11,10 +11,11 @@ class Player extends PositionComponent {
     this.target,
     // this.cellSize = 54,
   }) {
-    this.position = Vector2(
-      position.x * cellSize + cellSize / 2,
-      position.y * cellSize + cellSize / 2,
-    );
+    this.position = position;
+    // this.position = Vector2(
+    //   position.x * cellSize + cellSize / 2,
+    //   position.y * cellSize + cellSize / 2,
+    // );
 
     size = Vector2.all(cellSize * 0.8);
     anchor = Anchor.center;

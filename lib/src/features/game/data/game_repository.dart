@@ -61,10 +61,13 @@ class GameRepository {
     List<PlayerModel> gamePlayers = [];
 
     for (int i = 0; i < players.length; i++) {
+      final position =
+          poses[players.length - 2][i] * _cellSize + Vector2.all(_cellSize / 2);
+
       gamePlayers.add(
         PlayerModel(
           uid: players[i],
-          position: poses[players.length - 2][i],
+          position: position,
           action: PlayerAction.none,
           life: 3,
           actionPos: null,
@@ -111,7 +114,7 @@ class GameRepository {
   Future<void> playerSendAction(
     GameId id,
     PlayerModel player, [
-    int milliseconds = 5 * 1000,
+    int milliseconds = 10 * 1000,
   ]) async {
     final gameData = await _collection.doc(id).get();
     final game = Game.fromMap(gameData.data()!);
@@ -119,6 +122,11 @@ class GameRepository {
     final players = game.players;
 
     final playerIndex = players.indexWhere((p) => p.uid == player.uid);
+
+    if (players[playerIndex].action != PlayerAction.none) {
+      return;
+    }
+
     players[playerIndex] = player;
 
     // if (players.indexWhere((p) => p.action == PlayerAction.none) == -1) {
@@ -160,6 +168,10 @@ class GameRepository {
           basePos.floor();
 
           for (int i = 0; i < 9; i++) {
+            if (i == 4) {
+              continue;
+            }
+
             dangerPos.add(
               Vector2(basePos.x + (i % 3) - 1, basePos.y + (i / 3).floor() - 1),
             );
@@ -210,7 +222,6 @@ class GameRepository {
             );
           }
           // }
-          print('Move');
         } else {
           if (dangerPos.contains(cellPos)) {
             players.add(p.copyWith(life: p.life - 1));
@@ -225,13 +236,10 @@ class GameRepository {
           //   players.add(p.copyWith(life: p.life - 1));
           // } catch (e) {
           // }
-          print('Still');
         }
       }
 
-      print(players.toString());
-
-      if (players.length == 1) {
+      if (players.length < 2) {
         await _collection
             .doc(id)
             .set(
@@ -245,7 +253,7 @@ class GameRepository {
                   .copyWith(
                     status: GameStatus.showing,
                     players: players,
-                    timestamp: game.timestamp + 5 * 1000,
+                    timestamp: game.timestamp + 10 * 1000,
                   )
                   .toMap(),
             );
@@ -276,7 +284,9 @@ class GameRepository {
                         ),
                       )
                       .toList(),
-                  timestamp: DateTime.now().millisecondsSinceEpoch + 10 * 1000,
+                  timestamp:
+                      DateTime.now().millisecondsSinceEpoch +
+                      (game.players.length < 2 ? 5 : 20) * 1000,
                 )
                 .toMap(),
           );
