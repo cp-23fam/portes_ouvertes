@@ -81,6 +81,7 @@ class GameRepository {
         timestamp: DateTime.now().millisecondsSinceEpoch + 5 * 1000,
         players: gamePlayers,
         status: GameStatus.starting,
+        blocked: [],
       ).toMap(),
     );
 
@@ -128,6 +129,7 @@ class GameRepository {
     }
 
     players[playerIndex] = player;
+    game.blocked.remove(player.uid);
 
     await _collection
         .doc(id)
@@ -200,12 +202,14 @@ class GameRepository {
               ),
             );
           }
-        } else {
+        } else if (p.action != PlayerAction.block) {
           if (dangerPos.contains(cellPos)) {
             players.add(p.copyWith(life: p.life - 1));
           } else {
             players.add(p);
           }
+        } else {
+          players.add(p);
         }
       }
 
@@ -224,6 +228,10 @@ class GameRepository {
                     status: GameStatus.showing,
                     players: players,
                     timestamp: game.timestamp + 10 * 1000,
+                    blocked: players
+                        .where((p) => p.action == PlayerAction.block)
+                        .map((p) => p.uid)
+                        .toList(),
                   )
                   .toMap(),
             );

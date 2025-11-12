@@ -27,28 +27,28 @@ class GameScreen extends StatefulWidget {
 }
 
 class _GameScreenState extends State<GameScreen> {
-  MyGame? game;
+  MyGame? flameGame;
   String actualAction = '';
 
   void _onActionSelected(PlayerAction action) {
-    if (game!.status != GameStatus.choosing) {
+    if (flameGame!.status != GameStatus.choosing) {
       return;
     }
 
     if (action == PlayerAction.move) {
-      game!.getPlayerById(widget.playerId).action = PlayerAction.move;
-      game!.highlightMoveZone(widget.playerId);
+      flameGame!.getPlayerById(widget.playerId).action = PlayerAction.move;
+      flameGame!.highlightMoveZone(widget.playerId);
     } else if (action == PlayerAction.melee) {
-      game!.highlightMeleeZone(widget.playerId);
-      game!.getPlayerById(widget.playerId).action = PlayerAction.melee;
+      flameGame!.highlightMeleeZone(widget.playerId);
+      flameGame!.getPlayerById(widget.playerId).action = PlayerAction.melee;
     } else if (action == PlayerAction.shoot) {
-      game!.highlightShootZone(widget.playerId);
-      game!.getPlayerById(widget.playerId).action = PlayerAction.shoot;
+      flameGame!.highlightShootZone(widget.playerId);
+      flameGame!.getPlayerById(widget.playerId).action = PlayerAction.shoot;
     } else if (action == PlayerAction.block) {
-      game!.highlightBlockZone(widget.playerId);
-      game!.getPlayerById(widget.playerId).action = PlayerAction.block;
+      flameGame!.highlightBlockZone(widget.playerId);
+      flameGame!.getPlayerById(widget.playerId).action = PlayerAction.block;
     } else {
-      game!.grid.clearHighlights();
+      flameGame!.grid.clearHighlights();
     }
   }
 
@@ -70,180 +70,189 @@ class _GameScreenState extends State<GameScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: Column(
-          children: [
-            // Game
-            Center(
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: SizedBox(
-                  height: 54 * 9,
-                  width: 54 * 9,
-                  child: Consumer(
-                    builder: (context, ref, child) {
-                      final gameData = ref.watch(
-                        gameStreamProvider(widget.gameId),
-                      );
-                      return gameData.when(
-                        data: (gameClass) {
-                          game ??= MyGame(ref: ref);
+        child: Consumer(
+          builder: (context, ref, child) {
+            final gameData = ref.watch(gameStreamProvider(widget.gameId));
 
-                          game!.timestamp = gameClass.timestamp;
-                          game!.status = gameClass.status;
+            return gameData.when(
+              data: (game) {
+                late final PlayerModel? player;
 
-                          if (!game!.isInit) {
-                            game!.gameId = widget.gameId;
-                            game!.gameMerge(gameClass);
-                            game!.isInit = true;
-                          }
+                try {
+                  player = game.players.firstWhere(
+                    (p) => p.uid == widget.playerId,
+                  );
+                } catch (e) {
+                  player = null;
+                }
 
-                          if (gameClass.status == GameStatus.starting) {
-                            ref
-                                .read(gameRepositoryProvider)
-                                .startChoosing(widget.gameId);
-                          }
+                bool canValidate = player?.action == PlayerAction.none;
 
-                          if (gameClass.status == GameStatus.showing) {
-                            game!.gameUpdatePlayers(gameClass);
-                          }
+                flameGame ??= MyGame(ref: ref);
 
-                          if (gameClass.status == GameStatus.ended) {
-                            ref
-                                .read(roomRepositoryProvider)
-                                .deleteRoom(widget.roomId);
+                flameGame!.timestamp = game.timestamp;
+                flameGame!.status = game.status;
 
-                            SchedulerBinding.instance.addPostFrameCallback((_) {
-                              context.goNamed(RouteNames.home.name);
-                            });
-                          }
+                if (!flameGame!.isInit) {
+                  flameGame!.gameId = widget.gameId;
+                  flameGame!.gameMerge(game);
+                  flameGame!.isInit = true;
+                }
 
-                          return GameWidget(game: game!);
-                        },
-                        error: (error, stackTrace) {
-                          return Center(child: Text(error.toString()));
-                        },
-                        loading: () => const Placeholder(),
-                      );
-                    },
-                  ),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Consumer(
-              builder: (context, ref, child) {
-                final gameStatus = ref.watch(gameStreamProvider(widget.gameId));
+                if (game.status == GameStatus.starting) {
+                  ref.read(gameRepositoryProvider).startChoosing(widget.gameId);
+                }
 
-                return gameStatus.when(
-                  data: (game) {
-                    try {
-                      final player = game.players.firstWhere(
-                        (p) => p.uid == FirebaseAuth.instance.currentUser!.uid,
-                      );
+                if (game.status == GameStatus.showing) {
+                  flameGame!.gameUpdatePlayers(game);
+                  canValidate = false;
+                }
 
-                      return lifeWidget(player.life);
-                    } catch (e) {
-                      return lifeWidget(0);
-                    }
-                  },
-                  loading: () => lifeWidget(3),
-                  error: (error, stackTrace) => lifeWidget(3),
-                );
-              },
-            ),
-            Stack(
-              children: [
-                // Interface
-                Align(
-                  alignment: Alignment.bottomCenter,
-                  child: Padding(
-                    padding: const EdgeInsets.all(40.0),
-                    child: SizedBox(
-                      width: 200,
-                      height: 200,
-                      child: Stack(
-                        alignment: Alignment.center,
-                        children: [
-                          Positioned(
-                            right: 0,
-                            child: _buildGameButton(
-                              icon: Icons.arrow_forward,
-                              color: Colors.green,
-                              label: 'Move',
-                              onPressed: () {
-                                _onActionSelected(PlayerAction.move);
-                              },
-                            ),
-                          ),
+                if (game.status == GameStatus.ended) {
+                  ref.read(roomRepositoryProvider).deleteRoom(widget.roomId);
 
-                          Positioned(
-                            left: 0,
-                            child: _buildGameButton(
-                              icon: Icons.flash_on,
-                              color: Colors.red,
-                              label: 'Atk',
-                              onPressed: () =>
-                                  _onActionSelected(PlayerAction.melee),
-                            ),
-                          ),
+                  SchedulerBinding.instance.addPostFrameCallback((_) {
+                    context.goNamed(RouteNames.home.name);
+                  });
+                }
 
-                          Positioned(
-                            top: 0,
-                            child: _buildGameButton(
-                              icon: Icons.bolt,
-                              color: Colors.orange,
-                              label: 'Shoot',
-                              onPressed: () =>
-                                  _onActionSelected(PlayerAction.shoot),
-                            ),
-                          ),
-
-                          Positioned(
-                            bottom: 0,
-                            child: _buildGameButton(
-                              icon: Icons.shield,
-                              color: Colors.blue,
-                              label: 'Defend',
-                              onPressed: () =>
-                                  _onActionSelected(PlayerAction.block),
-                            ),
-                          ),
-                        ],
+                return Column(
+                  children: [
+                    // Game
+                    Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: SizedBox(
+                          height: 54 * 9,
+                          width: 54 * 9,
+                          child: GameWidget(game: flameGame!),
+                        ),
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-            Consumer(
-              builder: (context, ref, child) {
-                return ImportantButton(
-                  color: AppColors.goodColor,
-                  text: 'Valider',
-                  onPressed: () async {
-                    final selected = game!.grid.selectedCell;
-                    final playerRef = game!.getPlayerById(widget.playerId);
 
-                    if (selected != null) {
-                      playerRef.target = selected;
-                    }
+                    const SizedBox(height: 20),
 
-                    PlayerModel player = PlayerModel(
-                      uid: playerRef.id,
-                      position: playerRef.position,
-                      action: playerRef.action,
-                      life: playerRef.lives,
-                      actionPos: playerRef.target,
-                    );
+                    lifeWidget(player?.life ?? 0),
 
-                    await ref
-                        .read(gameRepositoryProvider)
-                        .playerSendAction(widget.gameId, player);
-                  },
+                    Stack(
+                      children: [
+                        // Interface
+                        Align(
+                          alignment: Alignment.bottomCenter,
+                          child: Padding(
+                            padding: const EdgeInsets.all(40.0),
+                            child: SizedBox(
+                              width: 200,
+                              height: 200,
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Positioned(
+                                    right: 0,
+                                    child: _buildGameButton(
+                                      icon: Icons.arrow_forward,
+                                      color: Colors.green,
+                                      label: 'Move',
+                                      isValidated: canValidate,
+                                      onPressed: () =>
+                                          _onActionSelected(PlayerAction.move),
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    left: 0,
+                                    child: _buildGameButton(
+                                      icon: Icons.flash_on,
+                                      color: Colors.red,
+                                      label: 'Atk',
+                                      isValidated: canValidate,
+                                      onPressed: () =>
+                                          _onActionSelected(PlayerAction.melee),
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    top: 0,
+                                    child: _buildGameButton(
+                                      icon: Icons.bolt,
+                                      color: Colors.orange,
+                                      label: 'Shoot',
+                                      isValidated: canValidate,
+                                      onPressed: () =>
+                                          _onActionSelected(PlayerAction.shoot),
+                                    ),
+                                  ),
+
+                                  Positioned(
+                                    bottom: 0,
+                                    child: _buildGameButton(
+                                      icon: Icons.shield,
+                                      color: Colors.blue,
+                                      label: 'Defend',
+                                      isValidated:
+                                          canValidate &&
+                                          !game.blocked.contains(
+                                            widget.playerId,
+                                          ),
+                                      onPressed: () =>
+                                          _onActionSelected(PlayerAction.block),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    player != null
+                        ? ImportantButton(
+                            color: canValidate
+                                ? AppColors.goodColor
+                                : AppColors.thirdColor,
+                            text: 'Valider',
+                            onPressed: canValidate
+                                ? () async {
+                                    final selected =
+                                        flameGame!.grid.selectedCell;
+                                    final playerRef = flameGame!.getPlayerById(
+                                      widget.playerId,
+                                    );
+
+                                    if (selected != null) {
+                                      playerRef.target = selected;
+                                    }
+
+                                    PlayerModel player = PlayerModel(
+                                      uid: playerRef.id,
+                                      position: playerRef.position,
+                                      action: playerRef.action,
+                                      life: playerRef.lives,
+                                      actionPos: playerRef.target,
+                                    );
+
+                                    await ref
+                                        .read(gameRepositoryProvider)
+                                        .playerSendAction(
+                                          widget.gameId,
+                                          player,
+                                        );
+                                  }
+                                : null,
+                          )
+                        : ImportantButton(
+                            color: AppColors.deleteColor,
+                            text: 'Quitter',
+                            onPressed: () =>
+                                context.goNamed(RouteNames.home.name),
+                          ),
+                  ],
                 );
               },
-            ),
-          ],
+              error: (error, stackTrace) => Text(error.toString()),
+              loading: () => const Placeholder(),
+            );
+          },
         ),
       ),
     );
@@ -253,15 +262,18 @@ class _GameScreenState extends State<GameScreen> {
     required IconData icon,
     required Color color,
     required String label,
-    required VoidCallback onPressed,
+    required VoidCallback? onPressed,
+    required bool isValidated,
   }) {
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
         FloatingActionButton(
           heroTag: label,
-          onPressed: onPressed,
-          backgroundColor: color.withAlpha(220),
+          onPressed: isValidated ? onPressed : null,
+          backgroundColor: isValidated
+              ? color.withAlpha(220)
+              : color.withAlpha(100),
           shape: const CircleBorder(),
           child: Icon(icon, color: Colors.white, size: 40),
         ),
