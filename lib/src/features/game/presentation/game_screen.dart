@@ -3,12 +3,15 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flame/game.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/features/game/data/game_repository.dart';
 import 'package:portes_ouvertes/src/features/game/domain/game.dart';
 import 'package:portes_ouvertes/src/features/game/domain/player_model.dart';
 import 'package:portes_ouvertes/src/features/game/my_game.dart';
+import 'package:portes_ouvertes/src/routing/app_router.dart';
 import 'package:portes_ouvertes/src/theme/theme.dart';
 
 class GameScreen extends StatefulWidget {
@@ -58,6 +61,10 @@ class _GameScreenState extends State<GameScreen> {
   // }
 
   void _onActionSelected(PlayerAction action) {
+    if (game!.status != GameStatus.choosing) {
+      return;
+    }
+
     // Player player = game!.getPlayerById(widget.playerId);
     if (action == PlayerAction.move) {
       game!.getPlayerById(widget.playerId).action = PlayerAction.move;
@@ -111,13 +118,21 @@ class _GameScreenState extends State<GameScreen> {
                             game!.gameMerge(gameClass);
                             game!.isInit = true;
                           }
+
                           if (gameClass.status == GameStatus.starting) {
                             ref
                                 .read(gameRepositoryProvider)
                                 .startChoosing(widget.gameId);
-                          } else if (gameClass.status == GameStatus.choosing) {
-                          } else if (gameClass.status == GameStatus.showing) {
+                          }
+
+                          if (gameClass.status == GameStatus.showing) {
                             game!.gameUpdatePlayers(gameClass);
+                          }
+
+                          if (gameClass.status == GameStatus.ended) {
+                            SchedulerBinding.instance.addPostFrameCallback((_) {
+                              context.goNamed(RouteNames.home.name);
+                            });
                           }
 
                           return GameWidget(game: game!);
@@ -260,7 +275,7 @@ class _GameScreenState extends State<GameScreen> {
                       uid: playerRef.id,
                       position: playerRef.position,
                       action: playerRef.action,
-                      life: 3,
+                      life: playerRef.lives,
                       actionPos: playerRef.target,
                     );
 

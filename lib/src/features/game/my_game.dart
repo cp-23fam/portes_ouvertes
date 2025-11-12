@@ -56,17 +56,27 @@ class MyGame extends FlameGame {
     for (PlayerModel playerModel in game.players) {
       final player = getPlayerById(playerModel.uid);
 
-      if (player.action == PlayerAction.move) {
-        if (playerModel.actionPos != null) {
-          player.moveToCell(playerModel.actionPos!);
-        }
+      if (playerModel.action == PlayerAction.move) {
+        player.moveToCell(playerModel.actionPos!);
+        // if (playerModel.actionPos != null) {
+        //   player.moveToCell(playerModel.actionPos!);
+        // }
       }
 
       player.lives = playerModel.life;
 
       debugPrint(player.position.toString());
+    }
 
-      executeRoundEnd();
+    grid.clearHighlights();
+
+    // executeRoundEnd();
+  }
+
+  void removeDeadPlayers() {
+    for (Player player in players.where((p) => p.lives < 1)) {
+      remove(player);
+      players.remove(player);
     }
   }
 
@@ -99,21 +109,35 @@ class MyGame extends FlameGame {
   Future<void> update(double dt) async {
     super.update(dt);
 
+    if (status == GameStatus.choosing && players.length == 1) {
+      print('Win scene');
+      return;
+    }
+
     if (status == GameStatus.choosing) {
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
-        await ref.read(gameRepositoryProvider).playActions(gameId);
-        // gameUpdatePlayers()
+        final List<Vector2> dangerCells = await ref
+            .read(gameRepositoryProvider)
+            .playActions(gameId);
+        grid.highlightCells(dangerCells);
+        // gameUpdatePlayers();
       }
+
       print(
-        'Chossing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
+        'Choosing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
       );
-    } else if (status == GameStatus.showing) {
+    }
+
+    if (status == GameStatus.showing) {
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
-        ref.read(gameRepositoryProvider).nextRound(gameId);
+        await ref.read(gameRepositoryProvider).nextRound(gameId);
+        grid.clearHighlights();
+        removeDeadPlayers();
       }
-      print(
-        'Showing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
-      );
+
+      // print(
+      //   'Showing Timer : ${(timestamp - DateTime.now().millisecondsSinceEpoch) / 1000}',
+      // );
     }
   }
 
@@ -174,6 +198,10 @@ class MyGame extends FlameGame {
 
     for (int dx = -1; dx <= 1; dx++) {
       for (int dy = -1; dy <= 1; dy++) {
+        if (dy == 0 && dx == 0) {
+          continue;
+        }
+
         addIfValid(gridPos.x + dx, gridPos.y + dy);
       }
     }

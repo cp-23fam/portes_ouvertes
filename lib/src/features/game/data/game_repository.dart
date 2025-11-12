@@ -8,6 +8,7 @@ import 'package:portes_ouvertes/src/features/user/domain/user.dart';
 class GameRepository {
   final _db = FirebaseFirestore.instance;
   late final _collection = _db.collection('games');
+  final _cellSize = 54.0;
 
   Future<String> startGame(List<UserId> players, [String id = '']) async {
     late final DocumentReference<Map<String, dynamic>> doc;
@@ -110,7 +111,7 @@ class GameRepository {
   Future<void> playerSendAction(
     GameId id,
     PlayerModel player, [
-    int milliseconds = 10 * 1000,
+    int milliseconds = 5 * 1000,
   ]) async {
     final gameData = await _collection.doc(id).get();
     final game = Game.fromMap(gameData.data()!);
@@ -155,7 +156,8 @@ class GameRepository {
     for (PlayerModel p in game.players) {
       switch (p.action) {
         case PlayerAction.melee:
-          final Vector2 basePos = p.position;
+          final Vector2 basePos = p.position / _cellSize;
+          basePos.floor();
 
           for (int i = 0; i < 9; i++) {
             dangerPos.add(
@@ -168,6 +170,10 @@ class GameRepository {
           for (int i = 0; i < 3; i++) {
             dangerPos.add(Vector2(basePos.x - 1 + i, basePos.y));
           }
+
+          dangerPos.add(Vector2(basePos.x, basePos.y - 1));
+          dangerPos.add(Vector2(basePos.x, basePos.y + 1));
+
           break;
         default:
           continue;
@@ -178,42 +184,72 @@ class GameRepository {
       final List<PlayerModel> players = [];
 
       for (PlayerModel p in game.players) {
+        final Vector2 cellPos = p.position / _cellSize;
+        cellPos.floor();
+
         if (p.action == PlayerAction.move) {
-          try {
-            dangerPos.firstWhere(
-              (pos) => pos.x == p.actionPos!.x && pos.y == p.actionPos!.y,
-            );
+          // try {
+          //   dangerPos.firstWhere(
+          //     (pos) => pos.x == p.actionPos!.x && pos.y == p.actionPos!.y,
+          //   );
 
-            players.add(p.copyWith(life: p.life - 1));
-          } catch (e) {
-            players.add(p);
+          //   players.add(p.copyWith(life: p.life - 1));
+          // } catch (e) {
+          if (dangerPos.contains(p.actionPos!)) {
+            players.add(
+              p.copyWith(
+                life: p.life - 1,
+                position: p.actionPos! * _cellSize + Vector2.all(_cellSize / 2),
+              ),
+            );
+          } else {
+            players.add(
+              p.copyWith(
+                position: p.actionPos! * _cellSize + Vector2.all(_cellSize / 2),
+              ),
+            );
           }
+          // }
+          print('Move');
         } else {
-          try {
-            dangerPos.firstWhere(
-              (pos) => pos.x == p.position.x && pos.y == p.position.y,
-            );
-
+          if (dangerPos.contains(cellPos)) {
             players.add(p.copyWith(life: p.life - 1));
-          } catch (e) {
+          } else {
             players.add(p);
           }
+          // try {
+          //   dangerPos.firstWhere(
+          //     (pos) => pos.x == cellPos.x && pos.y == cellPos.y,
+          //   );
+
+          //   players.add(p.copyWith(life: p.life - 1));
+          // } catch (e) {
+          // }
+          print('Still');
         }
       }
 
-      print(players);
+      print(players.toString());
 
-      await _collection
-          .doc(id)
-          .set(
-            game
-                .copyWith(
-                  status: GameStatus.showing,
-                  players: players,
-                  timestamp: game.timestamp + 10 * 1000,
-                )
-                .toMap(),
-          );
+      if (players.length == 1) {
+        await _collection
+            .doc(id)
+            .set(
+              game.copyWith(status: GameStatus.ended, timestamp: null).toMap(),
+            );
+      } else {
+        await _collection
+            .doc(id)
+            .set(
+              game
+                  .copyWith(
+                    status: GameStatus.showing,
+                    players: players,
+                    timestamp: game.timestamp + 5 * 1000,
+                  )
+                  .toMap(),
+            );
+      }
     }
 
     return dangerPos;
@@ -224,13 +260,23 @@ class GameRepository {
     final game = Game.fromMap(gameData.data()!);
 
     if (game.status == GameStatus.showing) {
+      game.players.removeWhere((p) => p.life < 1);
+
       await _collection
           .doc(id)
           .set(
             game
                 .copyWith(
                   status: GameStatus.choosing,
-                  timestamp: DateTime.now().millisecondsSinceEpoch + 15 * 1000,
+                  players: game.players
+                      .map(
+                        (p) => p.copyWith(
+                          action: PlayerAction.none,
+                          actionPos: null,
+                        ),
+                      )
+                      .toList(),
+                  timestamp: DateTime.now().millisecondsSinceEpoch + 10 * 1000,
                 )
                 .toMap(),
           );
