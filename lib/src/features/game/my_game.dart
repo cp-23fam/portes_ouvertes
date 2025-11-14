@@ -109,6 +109,13 @@ class MyGame extends FlameGame {
         final List<Vector2> dangerCells = await ref
             .read(gameRepositoryProvider)
             .playActions(gameId);
+        grid.attackedCell = true;
+        // grid.showShields()
+        // for (Player player in players) {
+        //   if (player.action == PlayerAction.block) {
+        //     grid.showShield(player.position);
+        //   }
+        // }
         grid.highlightCells(dangerCells);
       }
     }
@@ -124,11 +131,14 @@ class MyGame extends FlameGame {
     }
   }
 
+  void showActionOnPlayer(Vector2 cell, PlayerAction action) {}
+
   // Highlight the Grid
 
   void highlightMoveZone(String playerId) {
     final player = players.firstWhere((p) => p.id == playerId);
     grid.action = PlayerAction.move;
+    grid.attackedCell = false;
 
     final Vector2 gridPos = Vector2(
       (player.position.x / player.cellSize).floorToDouble(),
@@ -160,6 +170,7 @@ class MyGame extends FlameGame {
   void highlightMeleeZone(String playerId) {
     final player = players.firstWhere((p) => p.id == playerId);
     grid.action = PlayerAction.melee;
+    grid.attackedCell = true;
 
     final Vector2 gridPos = Vector2(
       (player.position.x / player.cellSize).floorToDouble(),
@@ -190,6 +201,7 @@ class MyGame extends FlameGame {
   void highlightShootZone(String playerId) {
     final player = players.firstWhere((p) => p.id == playerId);
     grid.action = PlayerAction.shoot;
+    grid.attackedCell = false;
 
     final Vector2 gridPos = Vector2(
       (player.position.x / player.cellSize).floorToDouble(),
@@ -203,12 +215,6 @@ class MyGame extends FlameGame {
         neighbors.add(Vector2(x, y));
       }
     }
-
-    // for (int dx = -1; dx <= 1; dx++) {
-    //   for (int dy = -1; dy <= 1; dy++) {
-    //     addIfValid(gridPos.x + dx, gridPos.y + dy);
-    //   }
-    // }
 
     addIfValid(gridPos.x + 3, gridPos.y + 1);
     addIfValid(gridPos.x + 3, gridPos.y);
@@ -240,22 +246,13 @@ class MyGame extends FlameGame {
   void highlightBlockZone(String playerId) {
     final player = players.firstWhere((p) => p.id == playerId);
     grid.action = PlayerAction.block;
+    grid.attackedCell = false;
 
     final Vector2 gridPos = Vector2(
       (player.position.x / player.cellSize).floorToDouble(),
       (player.position.y / player.cellSize).floorToDouble(),
     );
 
-    final List<Vector2> neighbors = [];
-
-    void addIfValid(double x, double y) {
-      if (x >= 0 && x < grid.sizeInCells && y >= 0 && y < grid.sizeInCells) {
-        neighbors.add(Vector2(x, y));
-      }
-    }
-
-    addIfValid(gridPos.x, gridPos.y);
-
-    grid.highlightCells(neighbors);
+    grid.showShield(Vector2(gridPos.x, gridPos.y));
   }
 }
