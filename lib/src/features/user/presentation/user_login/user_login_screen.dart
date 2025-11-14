@@ -199,48 +199,48 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                         },
                       ),
                     ),
-                    gapH8,
-                    Center(
-                      child: Consumer(
-                        builder: (context, ref, child) {
-                          return SignInButton(
-                            btnText: 'Connexion GitHub'.hardcoded,
-                            buttonType: ButtonType.github,
-                            buttonSize: ButtonSize.medium,
-                            btnColor: AppColors.thirdColor,
-                            btnTextColor: AppColors.textColor,
-                            onPressed: () async {
-                              late final UserCredential userCredential;
+                    // gapH8,
+                    // Center(
+                    //   child: Consumer(
+                    //     builder: (context, ref, child) {
+                    //       return SignInButton(
+                    //         btnText: 'Connexion GitHub'.hardcoded,
+                    //         buttonType: ButtonType.github,
+                    //         buttonSize: ButtonSize.medium,
+                    //         btnColor: AppColors.thirdColor,
+                    //         btnTextColor: AppColors.textColor,
+                    //         onPressed: () async {
+                    //           late final UserCredential userCredential;
 
-                              if (kIsWeb) {
-                                userCredential = await FirebaseAuth.instance
-                                    .signInWithPopup(GithubAuthProvider());
-                              } else {
-                                userCredential = await FirebaseAuth.instance
-                                    .signInWithProvider(
-                                      OAuthProvider('github.com'),
-                                    );
-                              }
+                    //           if (kIsWeb) {
+                    //             userCredential = await FirebaseAuth.instance
+                    //                 .signInWithPopup(GithubAuthProvider());
+                    //           } else {
+                    //             userCredential = await FirebaseAuth.instance
+                    //                 .signInWithProvider(
+                    //                   OAuthProvider('github.com'),
+                    //                 );
+                    //           }
 
-                              ref
-                                  .read(userRepositoryProvider)
-                                  .createUser(
-                                    userCredential.user!.uid,
-                                    userCredential.user!.displayName ??
-                                        userCredential.user!.email!.split(
-                                          '@',
-                                        )[0],
-                                    imageUrl: userCredential.user!.photoURL,
-                                  );
+                    //           ref
+                    //               .read(userRepositoryProvider)
+                    //               .createUser(
+                    //                 userCredential.user!.uid,
+                    //                 userCredential.user!.displayName ??
+                    //                     userCredential.user!.email!.split(
+                    //                       '@',
+                    //                     )[0],
+                    //                 imageUrl: userCredential.user!.photoURL,
+                    //               );
 
-                              if (context.mounted) {
-                                context.goNamed(RouteNames.home.name);
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    ),
+                    //           if (context.mounted) {
+                    //             context.goNamed(RouteNames.home.name);
+                    //           }
+                    //         },
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                     gapH20,
                     Center(
                       child: SignInButton(
