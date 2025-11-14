@@ -8,7 +8,7 @@ import 'package:portes_ouvertes/src/features/user/domain/user.dart';
 class GameRepository {
   final _db = FirebaseFirestore.instance;
   late final _collection = _db.collection('games');
-  final _cellSize = 54.0;
+  final _cellSize = 32.0;
 
   Future<String> startGame(List<UserId> players, [String id = '']) async {
     late final DocumentReference<Map<String, dynamic>> doc;

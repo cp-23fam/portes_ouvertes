@@ -23,7 +23,7 @@ class Player extends PositionComponent {
   final Color color;
   bool isAlive = true;
   int lives;
-  final double cellSize = 54;
+  final double cellSize = 32;
 
   void moveToCell(Vector2 cell) {
     position = Vector2(

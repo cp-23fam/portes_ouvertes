@@ -123,8 +123,8 @@ class _GameScreenState extends State<GameScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
-                          height: 54 * 9,
-                          width: 54 * 9,
+                          height: 32 * 9,
+                          width: 32 * 9,
                           child: GameWidget(game: flameGame!),
                         ),
                       ),

@@ -37,7 +37,7 @@ class MyGame extends FlameGame {
   ];
 
   void gameMerge(Game game) {
-    grid = Grid(sizeInCells: 9, cellSize: 54);
+    grid = Grid(sizeInCells: 9, cellSize: 32);
     add(grid);
 
     for (PlayerModel player in game.players) {
