@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/common_widgets/top_action_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
@@ -141,8 +142,20 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                   userCredential = await FirebaseAuth.instance
                                       .signInWithPopup(GoogleAuthProvider());
                                 } else {
+                                  final GoogleSignInAccount googleUser =
+                                      await GoogleSignIn.instance
+                                          .authenticate();
+
+                                  final GoogleSignInAuthentication googleAuth =
+                                      googleUser.authentication;
+
+                                  final credential =
+                                      GoogleAuthProvider.credential(
+                                        idToken: googleAuth.idToken,
+                                      );
+
                                   userCredential = await FirebaseAuth.instance
-                                      .signInWithProvider(GoogleAuthProvider());
+                                      .signInWithCredential(credential);
                                 }
 
                                 ref
@@ -186,46 +199,48 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                         },
                       ),
                     ),
-                    gapH8,
-                    Center(
-                      child: Consumer(
-                        builder: (context, ref, child) {
-                          return SignInButton(
-                            btnText: 'Connexion GitHub'.hardcoded,
-                            buttonType: ButtonType.github,
-                            buttonSize: ButtonSize.medium,
-                            btnColor: AppColors.thirdColor,
-                            btnTextColor: AppColors.textColor,
-                            onPressed: () async {
-                              late final UserCredential userCredential;
+                    // gapH8,
+                    // Center(
+                    //   child: Consumer(
+                    //     builder: (context, ref, child) {
+                    //       return SignInButton(
+                    //         btnText: 'Connexion GitHub'.hardcoded,
+                    //         buttonType: ButtonType.github,
+                    //         buttonSize: ButtonSize.medium,
+                    //         btnColor: AppColors.thirdColor,
+                    //         btnTextColor: AppColors.textColor,
+                    //         onPressed: () async {
+                    //           late final UserCredential userCredential;
 
-                              if (kIsWeb) {
-                                userCredential = await FirebaseAuth.instance
-                                    .signInWithPopup(GoogleAuthProvider());
-                              } else {
-                                userCredential = await FirebaseAuth.instance
-                                    .signInWithProvider(GoogleAuthProvider());
-                              }
+                    //           if (kIsWeb) {
+                    //             userCredential = await FirebaseAuth.instance
+                    //                 .signInWithPopup(GithubAuthProvider());
+                    //           } else {
+                    //             userCredential = await FirebaseAuth.instance
+                    //                 .signInWithProvider(
+                    //                   OAuthProvider('github.com'),
+                    //                 );
+                    //           }
 
-                              ref
-                                  .read(userRepositoryProvider)
-                                  .createUser(
-                                    userCredential.user!.uid,
-                                    userCredential.user!.displayName ??
-                                        userCredential.user!.email!.split(
-                                          '@',
-                                        )[0],
-                                    imageUrl: userCredential.user!.photoURL,
-                                  );
+                    //           ref
+                    //               .read(userRepositoryProvider)
+                    //               .createUser(
+                    //                 userCredential.user!.uid,
+                    //                 userCredential.user!.displayName ??
+                    //                     userCredential.user!.email!.split(
+                    //                       '@',
+                    //                     )[0],
+                    //                 imageUrl: userCredential.user!.photoURL,
+                    //               );
 
-                              if (context.mounted) {
-                                context.goNamed(RouteNames.home.name);
-                              }
-                            },
-                          );
-                        },
-                      ),
-                    ),
+                    //           if (context.mounted) {
+                    //             context.goNamed(RouteNames.home.name);
+                    //           }
+                    //         },
+                    //       );
+                    //     },
+                    //   ),
+                    // ),
                     gapH20,
                     Center(
                       child: SignInButton(

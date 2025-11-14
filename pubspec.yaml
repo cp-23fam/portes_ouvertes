@@ -44,6 +44,8 @@ dependencies:
   http: ^1.5.0
   flame: ^1.33.0
   auto_size_text: ^3.0.0
+  google_sign_in: ^7.2.0
+  google_sign_in_android: ^7.2.4
 
 dev_dependencies:
   flutter_test:

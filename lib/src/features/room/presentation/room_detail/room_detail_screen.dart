@@ -159,17 +159,17 @@ class _RoomDetailScreenState extends State<RoomDetailScreen> {
                   ),
                 );
               },
-              loading: () => Expanded(
-                child: ListView.separated(
-                  itemBuilder: (context, index) => const Padding(
-                    padding: EdgeInsets.all(Sizes.p8),
-                    child: NoUserCard(),
-                  ),
-                  separatorBuilder: (context, index) =>
-                      const SizedBox(height: 4.0),
-                  itemCount: 1,
+              loading: () => ListView.separated(
+                shrinkWrap: true,
+                itemBuilder: (context, index) => const Padding(
+                  padding: EdgeInsets.all(Sizes.p8),
+                  child: NoUserCard(),
                 ),
+                separatorBuilder: (context, index) =>
+                    const SizedBox(height: 4.0),
+                itemCount: 1,
               ),
+              // loading: () => Center(child: CircularProgressIndicator()),
             );
           },
         ),
