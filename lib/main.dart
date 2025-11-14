@@ -18,8 +18,8 @@ Future<void> main() async {
     await GoogleSignIn.instance.initialize();
   }
 
-  // FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
-  // FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
+  FirebaseAuth.instance.useAuthEmulator('localhost', 9099);
+  FirebaseFirestore.instance.useFirestoreEmulator('localhost', 8080);
 
   if (const String.fromEnvironment('USER').isNotEmpty) {
     const user = String.fromEnvironment('USER');
