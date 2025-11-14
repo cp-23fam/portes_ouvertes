@@ -13,18 +13,30 @@ class Grid extends PositionComponent with TapCallbacks {
   final int sizeInCells;
   final double cellSize;
   final List<Vector2> highlightedCells = [];
+  final List<Vector2> shields = [];
   PlayerAction action = PlayerAction.none;
   Vector2? selectedCell;
+  bool attackedCell = false;
 
   void highlightCells(List<Vector2> cells) {
     highlightedCells
       ..clear()
       ..addAll(cells);
     selectedCell = null;
+    shields.clear();
   }
 
   void clearHighlights() {
     highlightedCells.clear();
+    shields.clear();
+    selectedCell = null;
+  }
+
+  void showShield(Vector2 cell) {
+    highlightedCells.clear();
+    shields
+      ..clear()
+      ..add(cell);
     selectedCell = null;
   }
 
@@ -73,7 +85,10 @@ class Grid extends PositionComponent with TapCallbacks {
     final attackPaint = Paint()
       ..color = Colors.redAccent.withAlpha(100)
       ..style = PaintingStyle.fill
-      // ..style = PaintingStyle.stroke
+      ..strokeWidth = 3;
+    final shieldPaint = Paint()
+      ..color = Colors.blueAccent.withAlpha(100)
+      ..style = PaintingStyle.fill
       ..strokeWidth = 3;
 
     for (int i = 0; i <= sizeInCells; i++) {
@@ -90,9 +105,16 @@ class Grid extends PositionComponent with TapCallbacks {
     }
 
     for (final cell in highlightedCells) {
+      if (cell.x < 0 ||
+          cell.x >= sizeInCells ||
+          cell.y < 0 ||
+          cell.y >= sizeInCells) {
+        continue;
+      }
+
       canvas.drawRect(
         Rect.fromLTWH(cell.x * cellSize, cell.y * cellSize, cellSize, cellSize),
-        action == PlayerAction.melee ? attackPaint : highlightPaint,
+        attackedCell ? attackPaint : highlightPaint,
       );
     }
 
@@ -105,52 +127,40 @@ class Grid extends PositionComponent with TapCallbacks {
         final radius = cellSize / 2 - 4;
         canvas.drawCircle(center, radius, selectedPaint);
       } else if (action == PlayerAction.shoot) {
-        canvas.drawRect(
-          Rect.fromLTWH(
-            (selectedCell!.x * cellSize),
-            (selectedCell!.y * cellSize),
-            cellSize,
-            cellSize,
-          ),
-          attackPaint,
-        );
-        canvas.drawRect(
-          Rect.fromLTWH(
-            (selectedCell!.x + 1) * cellSize,
-            selectedCell!.y * cellSize,
-            cellSize,
-            cellSize,
-          ),
-          attackPaint,
-        );
-        canvas.drawRect(
-          Rect.fromLTWH(
-            (selectedCell!.x - 1) * cellSize,
-            selectedCell!.y * cellSize,
-            cellSize,
-            cellSize,
-          ),
-          attackPaint,
-        );
-        canvas.drawRect(
-          Rect.fromLTWH(
-            selectedCell!.x * cellSize,
-            (selectedCell!.y + 1) * cellSize,
-            cellSize,
-            cellSize,
-          ),
-          attackPaint,
-        );
-        canvas.drawRect(
-          Rect.fromLTWH(
-            selectedCell!.x * cellSize,
-            (selectedCell!.y - 1) * cellSize,
-            cellSize,
-            cellSize,
-          ),
-          attackPaint,
-        );
+        renderShootCross(canvas, selectedCell!, attackPaint);
       }
+    }
+
+    for (Vector2 shield in shields) {
+      final center = Offset(
+        shield.x * cellSize + cellSize / 2,
+        shield.y * cellSize + cellSize / 2,
+      );
+      final radius = cellSize / 1.7;
+      canvas.drawCircle(center, radius, shieldPaint);
+    }
+  }
+
+  void renderShootCross(Canvas canvas, Vector2 cell, Paint paint) {
+    final List<Vector2> offsets = [
+      Vector2(0, 0),
+      Vector2(1, 0),
+      Vector2(-1, 0),
+      Vector2(0, 1),
+      Vector2(0, -1),
+    ];
+
+    for (final o in offsets) {
+      final c = Vector2(cell.x + o.x, cell.y + o.y);
+
+      if (c.x < 0 || c.x >= sizeInCells || c.y < 0 || c.y >= sizeInCells) {
+        continue;
+      }
+
+      canvas.drawRect(
+        Rect.fromLTWH(c.x * cellSize, c.y * cellSize, cellSize, cellSize),
+        paint,
+      );
     }
   }
 }
