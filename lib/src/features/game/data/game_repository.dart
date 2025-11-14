@@ -227,7 +227,7 @@ class GameRepository {
                   .copyWith(
                     status: GameStatus.showing,
                     players: players,
-                    timestamp: game.timestamp + 10 * 1000,
+                    timestamp: game.timestamp + 5 * 1000,
                     blocked: players
                         .where((p) => p.action == PlayerAction.block)
                         .map((p) => p.uid)

@@ -123,14 +123,14 @@ class _GameScreenState extends State<GameScreen> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: SizedBox(
-                          height: 32 * 9,
-                          width: 32 * 9,
+                          height: 32.0 * 9.0,
+                          width: 32.0 * 9.0,
                           child: GameWidget(game: flameGame!),
                         ),
                       ),
                     ),
 
-                    const SizedBox(height: 20),
+                    gapH16,
 
                     lifeWidget(player?.life ?? 0),
 
@@ -142,13 +142,13 @@ class _GameScreenState extends State<GameScreen> {
                           child: Padding(
                             padding: const EdgeInsets.all(40.0),
                             child: SizedBox(
-                              width: 200,
-                              height: 200,
+                              width: 200.0,
+                              height: 200.0,
                               child: Stack(
                                 alignment: Alignment.center,
                                 children: [
                                   Positioned(
-                                    right: 0,
+                                    right: 0.0,
                                     child: _buildGameButton(
                                       icon: Icons.arrow_forward,
                                       color: Colors.green,
@@ -160,7 +160,7 @@ class _GameScreenState extends State<GameScreen> {
                                   ),
 
                                   Positioned(
-                                    left: 0,
+                                    left: 0.0,
                                     child: _buildGameButton(
                                       icon: Icons.flash_on,
                                       color: Colors.red,
@@ -172,7 +172,7 @@ class _GameScreenState extends State<GameScreen> {
                                   ),
 
                                   Positioned(
-                                    top: 0,
+                                    top: 0.0,
                                     child: _buildGameButton(
                                       icon: Icons.bolt,
                                       color: Colors.orange,
@@ -184,7 +184,7 @@ class _GameScreenState extends State<GameScreen> {
                                   ),
 
                                   Positioned(
-                                    bottom: 0,
+                                    bottom: 0.0,
                                     child: _buildGameButton(
                                       icon: Icons.shield,
                                       color: Colors.blue,
@@ -275,15 +275,15 @@ class _GameScreenState extends State<GameScreen> {
               ? color.withAlpha(220)
               : color.withAlpha(100),
           shape: const CircleBorder(),
-          child: Icon(icon, color: Colors.white, size: 40),
+          child: Icon(icon, color: Colors.white, size: 40.0),
         ),
-        const SizedBox(height: 4),
+        gapH4,
         Text(
           label,
           style: const TextStyle(
             color: Colors.white,
-            fontSize: 12,
-            shadows: [Shadow(blurRadius: 4, color: Colors.black)],
+            fontSize: 12.0,
+            shadows: [Shadow(blurRadius: 4.0, color: Colors.black)],
           ),
         ),
       ],

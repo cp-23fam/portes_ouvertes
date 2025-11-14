@@ -140,7 +140,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                               try {
                                 if (kIsWeb) {
                                   userCredential = await FirebaseAuth.instance
-                                      .signInWithPopup(GoogleAuthProvider());
+                                      .signInWithPopup(
+                                        GoogleAuthProvider()
+                                            .setCustomParameters({
+                                              'prompt': 'select_account',
+                                            }),
+                                      );
                                 } else {
                                   final GoogleSignInAccount googleUser =
                                       await GoogleSignIn.instance

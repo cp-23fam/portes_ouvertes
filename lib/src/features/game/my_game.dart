@@ -37,7 +37,7 @@ class MyGame extends FlameGame {
   ];
 
   void gameMerge(Game game) {
-    grid = Grid(sizeInCells: 9, cellSize: 32);
+    grid = Grid(sizeInCells: 9, cellSize: 32.0);
     add(grid);
 
     for (PlayerModel player in game.players) {
@@ -57,7 +57,7 @@ class MyGame extends FlameGame {
 
     text = TextComponent(
       text: '',
-      position: Vector2(5, 3),
+      position: Vector2(5.0, 3.0),
       textRenderer: TextPaint(
         style: TextStyle(color: BasicPalette.white.color, fontSize: 18.0),
       ),
@@ -104,7 +104,7 @@ class MyGame extends FlameGame {
 
     if (status == GameStatus.choosing) {
       text.text =
-          'Temps restant : ${((timestamp - DateTime.now().millisecondsSinceEpoch) / 1000).ceil()}s';
+          'Temps restant : ${((timestamp - DateTime.now().millisecondsSinceEpoch) / 1000.0).ceil()}s';
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
         final List<Vector2> dangerCells = await ref
             .read(gameRepositoryProvider)
@@ -122,7 +122,7 @@ class MyGame extends FlameGame {
 
     if (status == GameStatus.showing) {
       text.text =
-          'Prochain round : ${((timestamp - DateTime.now().millisecondsSinceEpoch) / 1000).ceil()}s';
+          'Prochain round : ${((timestamp - DateTime.now().millisecondsSinceEpoch) / 1000.0).ceil()}s';
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
         await ref.read(gameRepositoryProvider).nextRound(gameId);
         grid.clearHighlights();
@@ -148,7 +148,10 @@ class MyGame extends FlameGame {
     final List<Vector2> neighbors = [];
 
     void addIfValid(double x, double y) {
-      if (x >= 0 && x < grid.sizeInCells && y >= 0 && y < grid.sizeInCells) {
+      if (x >= 0.0 &&
+          x < grid.sizeInCells &&
+          y >= 0.0 &&
+          y < grid.sizeInCells) {
         neighbors.add(Vector2(x, y));
       }
     }
@@ -159,10 +162,10 @@ class MyGame extends FlameGame {
       }
     }
 
-    addIfValid(gridPos.x + 2, gridPos.y);
-    addIfValid(gridPos.x - 2, gridPos.y);
-    addIfValid(gridPos.x, gridPos.y + 2);
-    addIfValid(gridPos.x, gridPos.y - 2);
+    addIfValid(gridPos.x + 2.0, gridPos.y);
+    addIfValid(gridPos.x - 2.0, gridPos.y);
+    addIfValid(gridPos.x, gridPos.y + 2.0);
+    addIfValid(gridPos.x, gridPos.y - 2.0);
 
     grid.highlightCells(neighbors);
   }
@@ -180,7 +183,10 @@ class MyGame extends FlameGame {
     final List<Vector2> neighbors = [];
 
     void addIfValid(double x, double y) {
-      if (x >= 0 && x < grid.sizeInCells && y >= 0 && y < grid.sizeInCells) {
+      if (x >= 0.0 &&
+          x < grid.sizeInCells &&
+          y >= 0.0 &&
+          y < grid.sizeInCells) {
         neighbors.add(Vector2(x, y));
       }
     }
@@ -211,34 +217,37 @@ class MyGame extends FlameGame {
     final List<Vector2> neighbors = [];
 
     void addIfValid(double x, double y) {
-      if (x >= 0 && x < grid.sizeInCells && y >= 0 && y < grid.sizeInCells) {
+      if (x >= 0.0 &&
+          x < grid.sizeInCells &&
+          y >= 0.0 &&
+          y < grid.sizeInCells) {
         neighbors.add(Vector2(x, y));
       }
     }
 
-    addIfValid(gridPos.x + 3, gridPos.y + 1);
-    addIfValid(gridPos.x + 3, gridPos.y);
-    addIfValid(gridPos.x + 3, gridPos.y - 1);
+    addIfValid(gridPos.x + 3.0, gridPos.y + 1.0);
+    addIfValid(gridPos.x + 3.0, gridPos.y);
+    addIfValid(gridPos.x + 3.0, gridPos.y - 1.0);
 
-    addIfValid(gridPos.x - 3, gridPos.y + 1);
-    addIfValid(gridPos.x - 3, gridPos.y);
-    addIfValid(gridPos.x - 3, gridPos.y - 1);
+    addIfValid(gridPos.x - 3.0, gridPos.y + 1.0);
+    addIfValid(gridPos.x - 3.0, gridPos.y);
+    addIfValid(gridPos.x - 3.0, gridPos.y - 1.0);
 
-    addIfValid(gridPos.x + 1, gridPos.y + 3);
-    addIfValid(gridPos.x, gridPos.y + 3);
-    addIfValid(gridPos.x - 1, gridPos.y + 3);
+    addIfValid(gridPos.x + 1.0, gridPos.y + 3.0);
+    addIfValid(gridPos.x, gridPos.y + 3.0);
+    addIfValid(gridPos.x - 1.0, gridPos.y + 3.0);
 
-    addIfValid(gridPos.x + 1, gridPos.y - 3);
-    addIfValid(gridPos.x, gridPos.y - 3);
-    addIfValid(gridPos.x - 1, gridPos.y - 3);
+    addIfValid(gridPos.x + 1.0, gridPos.y - 3.0);
+    addIfValid(gridPos.x, gridPos.y - 3.0);
+    addIfValid(gridPos.x - 1.0, gridPos.y - 3.0);
 
-    addIfValid(gridPos.x + 2, gridPos.y - 2);
+    addIfValid(gridPos.x + 2.0, gridPos.y - 2.0);
 
-    addIfValid(gridPos.x - 2, gridPos.y + 2);
+    addIfValid(gridPos.x - 2.0, gridPos.y + 2.0);
 
-    addIfValid(gridPos.x + 2, gridPos.y + 2);
+    addIfValid(gridPos.x + 2.0, gridPos.y + 2.0);
 
-    addIfValid(gridPos.x - 2, gridPos.y - 2);
+    addIfValid(gridPos.x - 2.0, gridPos.y - 2.0);
 
     grid.highlightCells(neighbors);
   }
