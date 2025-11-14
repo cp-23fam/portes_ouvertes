@@ -3,6 +3,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:google_sign_in/google_sign_in.dart';
 import 'package:portes_ouvertes/src/common_widgets/important_button.dart';
 import 'package:portes_ouvertes/src/common_widgets/top_action_button.dart';
 import 'package:portes_ouvertes/src/constants/app_sizes.dart';
@@ -141,8 +142,20 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
                                   userCredential = await FirebaseAuth.instance
                                       .signInWithPopup(GoogleAuthProvider());
                                 } else {
+                                  final GoogleSignInAccount googleUser =
+                                      await GoogleSignIn.instance
+                                          .authenticate();
+
+                                  final GoogleSignInAuthentication googleAuth =
+                                      googleUser.authentication;
+
+                                  final credential =
+                                      GoogleAuthProvider.credential(
+                                        idToken: googleAuth.idToken,
+                                      );
+
                                   userCredential = await FirebaseAuth.instance
-                                      .signInWithProvider(GoogleAuthProvider());
+                                      .signInWithCredential(credential);
                                 }
 
                                 ref
@@ -201,10 +214,12 @@ class _UserLoginScreenState extends State<UserLoginScreen> {
 
                               if (kIsWeb) {
                                 userCredential = await FirebaseAuth.instance
-                                    .signInWithPopup(GoogleAuthProvider());
+                                    .signInWithPopup(GithubAuthProvider());
                               } else {
                                 userCredential = await FirebaseAuth.instance
-                                    .signInWithProvider(GoogleAuthProvider());
+                                    .signInWithProvider(
+                                      OAuthProvider('github.com'),
+                                    );
                               }
 
                               ref
