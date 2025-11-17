@@ -105,7 +105,13 @@ class MyGame extends FlameGame {
     if (status == GameStatus.choosing) {
       text.text =
           'Temps restant : ${((timestamp - DateTime.now().millisecondsSinceEpoch) / 1000.0).ceil()}s';
+
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
+        if (grid.attackedCell = true) {
+          grid.attackedCell = false;
+          grid.clearHighlights();
+        }
+
         final List<Vector2> dangerCells = await ref
             .read(gameRepositoryProvider)
             .playActions(gameId);
@@ -123,6 +129,17 @@ class MyGame extends FlameGame {
     if (status == GameStatus.showing) {
       text.text =
           'Prochain round : ${((timestamp - DateTime.now().millisecondsSinceEpoch) / 1000.0).ceil()}s';
+
+      if (!grid.attackedCell) {
+        grid.attackedCell = true;
+
+        final List<Vector2> dangerCells = await ref
+            .read(gameRepositoryProvider)
+            .playActions(gameId);
+
+        grid.highlightCells(dangerCells);
+      }
+
       if (timestamp < DateTime.now().millisecondsSinceEpoch) {
         await ref.read(gameRepositoryProvider).nextRound(gameId);
         grid.clearHighlights();
